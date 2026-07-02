@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: int_weather_comfort
+    description: Per-destination, per-month climate normals and a 0-100 weather comfort score.
+    columns:
+      - name: iata
+        tests:
+          - not_null
+      - name: month
+        tests:
+          - not_null
+
+  - name: int_holiday_pressure
+    description: Per-destination, per-month public-holiday density and a 0-100 pressure score (inverted).
+
+  - name: int_demand_index
+    description: Per-destination, per-month OpenSky flight-volume index relative to that destination's own average, as a 0-100 demand score (inverted).
+
+  - name: int_price_index
+    description: Per-destination, per-month Travelpayouts cheapest-fare index relative to that destination's own average, as a 0-100 price score.

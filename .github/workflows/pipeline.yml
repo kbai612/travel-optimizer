@@ -1,0 +1,42 @@
+name: Pipeline
+
+on:
+  schedule:
+    - cron: "17 6 * * *" # daily, ~06:17 UTC
+  workflow_dispatch: {}
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Run extractors
+        env:
+          OPENSKY_CLIENT_ID: ${{ secrets.OPENSKY_CLIENT_ID }}
+          OPENSKY_CLIENT_SECRET: ${{ secrets.OPENSKY_CLIENT_SECRET }}
+          TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
+          HOME_AIRPORT_IATA: ${{ vars.HOME_AIRPORT_IATA }}
+        run: uv run python -m extract.run --all
+
+      - name: Load warehouse
+        run: uv run python -m warehouse.load
+
+      - name: dbt build
+        working-directory: dbt
+        run: uv run --project .. dbt build --profiles-dir .
+
+      # data/ and *.duckdb are gitignored (see README) — the refreshed warehouse is
+      # published as a run artifact rather than committed back to the repo.
+      - name: Upload warehouse artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: warehouse-duckdb
+          path: warehouse.duckdb
+          retention-days: 14

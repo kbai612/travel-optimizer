@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: dim_destination
+    description: One row per destination tracked by the pipeline (config/destinations.yml, seeded).
+    columns:
+      - name: iata
+        tests:
+          - not_null
+          - unique
+
+  - name: fct_travel_score
+    description: >
+      One row per (destination, calendar month) with each 0-100 sub-score and the
+      final weighted travel_score. See dbt_project.yml `vars` for the score weights.
+    columns:
+      - name: iata
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_destination')
+              field: iata
+      - name: month
+        tests:
+          - not_null
+      - name: travel_score
+        tests:
+          - not_null

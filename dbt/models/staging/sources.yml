@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: weather_daily
+        description: Flattened daily weather observations from Open-Meteo (bronze -> silver via warehouse/load.py).
+      - name: holidays
+        description: Public holidays by destination country from Nager.Date.
+      - name: flights_sampled
+        description: >
+          Sampled arrival/departure counts per destination from OpenSky Network
+          (one representative 2-day window per calendar month, see extract/opensky.py).
+      - name: price_monthly
+        description: Cheapest-fare-by-month per destination from the Travelpayouts Data API.

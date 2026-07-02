@@ -1,0 +1,52 @@
+version: 2
+
+models:
+  - name: stg_weather
+    description: Daily weather observations per destination, typed and cleaned.
+    columns:
+      - name: iata
+        description: Destination airport code.
+        tests:
+          - not_null
+      - name: observed_date
+        tests:
+          - not_null
+      - name: temp_mean_c
+        tests:
+          - not_null
+
+  - name: stg_holidays
+    description: Public holidays per destination country.
+    columns:
+      - name: iata
+        tests:
+          - not_null
+      - name: holiday_date
+        tests:
+          - not_null
+      - name: country_code
+        tests:
+          - not_null
+
+  - name: stg_flights
+    description: Sampled arrival/departure counts per destination from OpenSky (one 2-day window per month).
+    columns:
+      - name: iata
+        tests:
+          - not_null
+      - name: window_start
+        tests:
+          - not_null
+      - name: total_movements
+        tests:
+          - not_null
+
+  - name: stg_price_monthly
+    description: Cheapest-fare-by-month per destination from the Travelpayouts Data API.
+    columns:
+      - name: iata
+        tests:
+          - not_null
+      - name: period
+        tests:
+          - not_null

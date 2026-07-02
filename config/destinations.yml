@@ -1,0 +1,66 @@
+# Destinations analyzed by the pipeline.
+#
+# iata:     primary international airport code (drives Travelpayouts lookups)
+# icao:     ICAO airport code (drives OpenSky Network lookups)
+# country:  ISO 3166-1 alpha-2 (drives Nager.Date public holiday lookups)
+# lat/lon:  airport coordinates (drives Open-Meteo weather lookups)
+#
+# Chosen for a spread of hemispheres and climates so seasonal contrasts are visible
+# in the final scores (e.g. Northern Hemisphere winter == Southern Hemisphere summer).
+
+destinations:
+  - name: Lisbon
+    iata: LIS
+    icao: LPPT
+    country: PT
+    lat: 38.7813
+    lon: -9.1359
+
+  - name: Tokyo
+    iata: HND
+    icao: RJTT
+    country: JP
+    lat: 35.5494
+    lon: 139.7798
+
+  - name: New York
+    iata: JFK
+    icao: KJFK
+    country: US
+    lat: 40.6413
+    lon: -73.7781
+
+  - name: Cape Town
+    iata: CPT
+    icao: FACT
+    country: ZA
+    lat: -33.9715
+    lon: 18.6021
+
+  - name: Bangkok
+    iata: BKK
+    icao: VTBS
+    country: TH
+    lat: 13.6900
+    lon: 100.7501
+
+  - name: Sydney
+    iata: SYD
+    icao: YSSY
+    country: AU
+    lat: -33.9399
+    lon: 151.1753
+
+  - name: Reykjavik
+    iata: KEF
+    icao: BIKF
+    country: IS
+    lat: 63.9850
+    lon: -22.6056
+
+  - name: Rio de Janeiro
+    iata: GIG
+    icao: SBGL
+    country: BR
+    lat: -22.8090
+    lon: -43.2506
