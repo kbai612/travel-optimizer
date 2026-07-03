@@ -96,7 +96,11 @@ def run(destinations: list[Destination] | None = None) -> None:
     windows = monthly_sample_windows()
     with new_client() as client:
         for dest in destinations:
-            token = fetch_token(client)  # refresh per destination; token TTL is ~30 min
+            try:
+                token = fetch_token(client)  # refresh per destination; token TTL is ~30 min
+            except ApiError as exc:
+                logger.warning("OpenSky token fetch failed for %s: %s", dest.name, exc)
+                continue
             for start, end in windows:
                 payload = fetch_window(client, token, dest.icao, start, end)
                 out_path = bronze_path(
