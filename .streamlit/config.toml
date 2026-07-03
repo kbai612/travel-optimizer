@@ -1,0 +1,10 @@
+# Streamlit theme — mirrors the dashboard's chart palette (dashboard/app.py) so the
+# app chrome and the Plotly figures read as one design system. Applied automatically
+# both locally and on Streamlit Community Cloud.
+[theme]
+base = "light"
+primaryColor = "#1baf7a"
+backgroundColor = "#fcfcfb"
+secondaryBackgroundColor = "#f2f1ec"
+textColor = "#0b0b0b"
+font = "sans serif"

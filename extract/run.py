@@ -11,7 +11,7 @@ import importlib
 
 from extract.config import load_destinations
 
-SOURCES = ["open_meteo", "nager", "opensky", "travelpayouts"]
+SOURCES = ["open_meteo", "nager", "opensky", "travelpayouts", "air_quality", "marine", "state_dept"]
 
 
 def parse_args() -> argparse.Namespace:

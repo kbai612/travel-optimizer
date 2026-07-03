@@ -20,6 +20,10 @@ DEFAULT_TIMEOUT = 30.0
 class ApiError(RuntimeError):
     """Raised when an API call fails after exhausting retries."""
 
+    def __init__(self, message: str, status_code: int | None = None):
+        super().__init__(message)
+        self.status_code = status_code
+
 
 def _is_retryable(exc: BaseException) -> bool:
     if isinstance(exc, httpx.TransportError):
@@ -51,7 +55,10 @@ def _to_json(client: httpx.Client, method: str, url: str, **kwargs) -> Any:
         response = _request(client, method, url, **kwargs)
     except httpx.HTTPStatusError as exc:
         body = exc.response.text[:200]
-        raise ApiError(f"{method} {url} failed: {exc.response.status_code} {body}") from exc
+        raise ApiError(
+            f"{method} {url} failed: {exc.response.status_code} {body}",
+            status_code=exc.response.status_code,
+        ) from exc
     except httpx.TransportError as exc:
         raise ApiError(f"{method} {url} failed: {exc}") from exc
     if not response.content:

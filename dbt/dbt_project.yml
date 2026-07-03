@@ -15,13 +15,17 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
-# Travel score weights (see models/marts/fct_travel_score.sql). Must sum to 1.0.
-# Tune these and re-run `dbt build` to see how the recommendations shift.
+# Travel score weights (see models/marts/fct_travel_score.sql). The six monthly
+# weights below must sum to 1.0; the travel advisory (safety) signal is applied
+# separately as a multiplier, not a weight, since it's per-country rather than
+# per-month. Tune these and re-run `dbt build` to see how the recommendations shift.
 vars:
-  weight_weather: 0.35
-  weight_demand: 0.25
-  weight_price: 0.20
-  weight_holiday: 0.20
+  weight_weather: 0.25
+  weight_demand: 0.20
+  weight_price: 0.18
+  weight_holiday: 0.12
+  weight_air_quality: 0.15
+  weight_sea_temp: 0.10
 
 models:
   travel_optimizer:

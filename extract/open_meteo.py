@@ -6,6 +6,7 @@ models can compute per-month climate normals (the weather comfort index).
 
 import datetime as dt
 import json
+import time
 
 import httpx
 
@@ -21,6 +22,9 @@ DAILY_VARS = [
     "precipitation_sum",
     "precipitation_hours",
     "windspeed_10m_max",
+    "apparent_temperature_max",
+    "apparent_temperature_min",
+    "sunshine_duration",
 ]
 
 
@@ -45,11 +49,23 @@ def fetch_destination(
     return get_json(client, ARCHIVE_URL, params=params)
 
 
+# All three Open-Meteo extractors (weather, air_quality, marine) share one per-IP
+# minute-rate limit. Each archive request is heavy (3 years of daily/hourly data),
+# and a burst of ~9 trips the limit with a "Minutely API request limit exceeded"
+# 429 whose 60s reset outlasts the shared client's backoff — so a fresh full run
+# across many destinations would crash mid-source. This proactive per-destination
+# spacing keeps a full run comfortably under that ceiling. Imported by
+# air_quality.py and marine.py so the three sources pace identically.
+REQUEST_SPACING_SECONDS = 8
+
+
 def run(destinations: list[Destination] | None = None) -> None:
     destinations = destinations or load_destinations()
     start_year, end_year = climate_year_range()
     with new_client() as client:
-        for dest in destinations:
+        for i, dest in enumerate(destinations):
+            if i:
+                time.sleep(REQUEST_SPACING_SECONDS)
             payload = fetch_destination(client, dest, start_year, end_year)
             out_path = bronze_path("open_meteo", dest.iata, f"{start_year}_{end_year}.json")
             out_path.write_text(json.dumps(payload))

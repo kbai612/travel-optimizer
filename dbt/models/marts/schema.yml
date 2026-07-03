@@ -8,11 +8,21 @@ models:
         tests:
           - not_null
           - unique
+      - name: advisory_score
+        description: >
+          0-100 derived from the US State Department advisory level (1-4) for this
+          destination's country; defaults to 100 (no penalty) when no advisory was
+          matched. Applied as a multiplier on travel_score, not an additive weight.
+        tests:
+          - not_null
 
   - name: fct_travel_score
     description: >
       One row per (destination, calendar month) with each 0-100 sub-score and the
       final weighted travel_score. See dbt_project.yml `vars` for the score weights.
+      Sub-scores fall back to neutral defaults when a signal has no data yet — the
+      has_* flags and data_confidence expose exactly when that's happening so
+      consumers don't mistake a default for a real reading.
     columns:
       - name: iata
         tests:
@@ -24,5 +34,46 @@ models:
         tests:
           - not_null
       - name: travel_score
+        tests:
+          - not_null
+      - name: has_weather
+        description: True if weather_comfort_score is real (Open-Meteo), false if defaulted to 50.
+        tests:
+          - not_null
+      - name: has_demand
+        description: True if demand_score is real (OpenSky), false if defaulted to 50.
+        tests:
+          - not_null
+      - name: has_price
+        description: True if price_score is real (Travelpayouts), false if defaulted to 50.
+        tests:
+          - not_null
+      - name: avg_price
+        description: >
+          Cheapest fare found for this destination/month (USD), unindexed. Null when
+          has_price is false — there's no neutral dollar default the way there is for
+          the 0-100 price_score.
+      - name: has_holiday
+        description: >
+          True if this destination's country has any Nager.Date coverage at all, false
+          if holiday_pressure_score is defaulted to 100 for every month (e.g. Bangkok —
+          Thailand isn't in Nager.Date).
+        tests:
+          - not_null
+      - name: has_air_quality
+        description: True if air_quality_score is real (Open-Meteo Air Quality), false if defaulted to 50.
+        tests:
+          - not_null
+      - name: has_sea_temp
+        description: >
+          True if sea_temp_score is real (Open-Meteo Marine), false if defaulted to 50
+          (e.g. no nearby sea grid cell was found for this destination).
+        tests:
+          - not_null
+      - name: data_confidence
+        description: >
+          Weight-weighted share (0-1) of travel_score backed by real data rather than
+          neutral defaults, using the same weights as the score itself. Does not include
+          the advisory multiplier, which is applied separately.
         tests:
           - not_null

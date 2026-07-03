@@ -64,3 +64,108 @@ destinations:
     country: BR
     lat: -22.8090
     lon: -43.2506
+
+  - name: Paris
+    iata: CDG
+    icao: LFPG
+    country: FR
+    lat: 49.0097
+    lon: 2.5479
+
+  - name: London
+    iata: LHR
+    icao: EGLL
+    country: GB
+    lat: 51.4700
+    lon: -0.4543
+
+  - name: Rome
+    iata: FCO
+    icao: LIRF
+    country: IT
+    lat: 41.8003
+    lon: 12.2389
+
+  - name: Barcelona
+    iata: BCN
+    icao: LEBL
+    country: ES
+    lat: 41.2974
+    lon: 2.0833
+
+  - name: Amsterdam
+    iata: AMS
+    icao: EHAM
+    country: NL
+    lat: 52.3105
+    lon: 4.7683
+
+  - name: Istanbul
+    iata: IST
+    icao: LTFM
+    country: TR
+    lat: 41.2753
+    lon: 28.7519
+
+  - name: Dubai
+    iata: DXB
+    icao: OMDB
+    country: AE
+    lat: 25.2532
+    lon: 55.3657
+
+  - name: Singapore
+    iata: SIN
+    icao: WSSS
+    country: SG
+    lat: 1.3644
+    lon: 103.9915
+
+  - name: Bali
+    iata: DPS
+    icao: WADD
+    country: ID
+    lat: -8.7482
+    lon: 115.1672
+
+  - name: Hong Kong
+    iata: HKG
+    icao: VHHH
+    country: HK
+    lat: 22.3080
+    lon: 113.9185
+
+  - name: Los Angeles
+    iata: LAX
+    icao: KLAX
+    country: US
+    lat: 33.9416
+    lon: -118.4085
+
+  - name: Cancun
+    iata: CUN
+    icao: MMUN
+    country: MX
+    lat: 21.0365
+    lon: -86.8771
+
+  - name: Marrakesh
+    iata: RAK
+    icao: GMMX
+    country: MA
+    lat: 31.6069
+    lon: -8.0363
+
+  - name: Buenos Aires
+    iata: EZE
+    icao: SAEZ
+    country: AR
+    lat: -34.8222
+    lon: -58.5358
+
+  - name: Honolulu
+    iata: HNL
+    icao: PHNL
+    country: US
+    lat: 21.3187
+    lon: -157.9225

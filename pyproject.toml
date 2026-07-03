@@ -28,3 +28,6 @@ line-length = 100
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Run from the repo root so `import extract` / `import warehouse` resolve the
+# same way they do under `python -m extract.run`, without an editable install.
+pythonpath = ["."]
