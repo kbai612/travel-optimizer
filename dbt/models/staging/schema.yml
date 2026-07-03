@@ -50,3 +50,33 @@ models:
       - name: period
         tests:
           - not_null
+
+  - name: stg_air_quality
+    description: Hourly PM2.5 observations per destination from Open-Meteo.
+    columns:
+      - name: iata
+        tests:
+          - not_null
+      - name: observed_at
+        tests:
+          - not_null
+
+  - name: stg_marine
+    description: Hourly sea-surface temperature per destination from Open-Meteo.
+    columns:
+      - name: iata
+        tests:
+          - not_null
+      - name: observed_at
+        tests:
+          - not_null
+
+  - name: stg_travel_advisory
+    description: US State Department travel advisory level per destination country.
+    columns:
+      - name: country_code
+        tests:
+          - not_null
+      - name: level
+        tests:
+          - not_null

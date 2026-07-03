@@ -19,3 +19,9 @@ models:
 
   - name: int_price_index
     description: Per-destination, per-month Travelpayouts cheapest-fare index relative to that destination's own average, as a 0-100 price score.
+
+  - name: int_air_quality
+    description: Per-destination, per-month average PM2.5 and a 0-100 air-quality score, scored against the WHO annual guideline.
+
+  - name: int_sea_temperature
+    description: Per-destination, per-month average sea-surface temperature and a 0-100 swim-comfort score. No rows for destinations without a nearby sea grid cell.

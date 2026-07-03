@@ -8,5 +8,7 @@ select
     temp_mean_c,
     precipitation_mm,
     precipitation_hours,
-    windspeed_max_kmh
+    windspeed_max_kmh,
+    apparent_temp_mean_c,
+    sunshine_hours
 from {{ source('raw', 'weather_daily') }}

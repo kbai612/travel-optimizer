@@ -33,6 +33,9 @@ def flatten_weather() -> pd.DataFrame:
     for iata, path in _iter_bronze_files("open_meteo"):
         daily = json.loads(path.read_text())["daily"]
         for i in range(len(daily["time"])):
+            apparent_max = daily["apparent_temperature_max"][i]
+            apparent_min = daily["apparent_temperature_min"][i]
+            sunshine_seconds = daily["sunshine_duration"][i]
             rows.append(
                 {
                     "iata": iata,
@@ -43,9 +46,66 @@ def flatten_weather() -> pd.DataFrame:
                     "precipitation_mm": daily["precipitation_sum"][i],
                     "precipitation_hours": daily["precipitation_hours"][i],
                     "windspeed_max_kmh": daily["windspeed_10m_max"][i],
+                    "apparent_temp_mean_c": (
+                        (apparent_max + apparent_min) / 2
+                        if apparent_max is not None and apparent_min is not None
+                        else None
+                    ),
+                    "sunshine_hours": sunshine_seconds / 3600 if sunshine_seconds is not None else None,
                 }
             )
     return pd.DataFrame(rows)
+
+
+def flatten_air_quality() -> pd.DataFrame:
+    """One row per (destination, hour) — see extract/air_quality.py."""
+    rows = []
+    for iata, path in _iter_bronze_files("air_quality"):
+        hourly = json.loads(path.read_text())["hourly"]
+        for i in range(len(hourly["time"])):
+            rows.append(
+                {
+                    "iata": iata,
+                    "observed_at": hourly["time"][i],
+                    "pm2_5": hourly["pm2_5"][i],
+                }
+            )
+    return _typed_frame(rows, AIR_QUALITY_SCHEMA)
+
+
+def flatten_marine() -> pd.DataFrame:
+    """One row per (destination, hour) — see extract/marine.py. Skipped for inland destinations."""
+    rows = []
+    for iata, path in _iter_bronze_files("marine"):
+        payload = json.loads(path.read_text())
+        hourly = payload.get("hourly") or {}
+        times = hourly.get("time") or []
+        sst = hourly.get("sea_surface_temperature") or []
+        for i in range(len(times)):
+            rows.append(
+                {
+                    "iata": iata,
+                    "observed_at": times[i],
+                    "sst_c": sst[i] if i < len(sst) else None,
+                }
+            )
+    return _typed_frame(rows, MARINE_SCHEMA)
+
+
+def flatten_travel_advisory() -> pd.DataFrame:
+    """One row per country advisory — see extract/state_dept.py."""
+    rows = []
+    for iata, path in _iter_bronze_files("state_dept"):
+        payload = json.loads(path.read_text())
+        if payload.get("country_code") and payload.get("level") is not None:
+            rows.append(
+                {
+                    "country_code": payload["country_code"],
+                    "level": payload["level"],
+                    "updated": payload.get("updated"),
+                }
+            )
+    return _typed_frame(rows, TRAVEL_ADVISORY_SCHEMA)
 
 
 def flatten_holidays() -> pd.DataFrame:
@@ -82,6 +142,21 @@ PRICE_MONTHLY_SCHEMA = {
     "origin": "string",
     "period": "string",
     "price": "Float64",
+}
+AIR_QUALITY_SCHEMA = {
+    "iata": "string",
+    "observed_at": "string",
+    "pm2_5": "Float64",
+}
+MARINE_SCHEMA = {
+    "iata": "string",
+    "observed_at": "string",
+    "sst_c": "Float64",
+}
+TRAVEL_ADVISORY_SCHEMA = {
+    "country_code": "string",
+    "level": "Int64",
+    "updated": "string",
 }
 
 
@@ -155,17 +230,25 @@ def run() -> None:
 
     flights_df = flatten_flights()
     price_df = flatten_price_monthly()
+    air_quality_df = flatten_air_quality()
+    marine_df = flatten_marine()
+    advisory_df = flatten_travel_advisory()
 
     tables = {
         "weather_daily": write_silver(weather_df, "open_meteo"),
         "holidays": write_silver(holidays_df, "nager"),
         "flights_sampled": write_silver(flights_df, "opensky"),
         "price_monthly": write_silver(price_df, "travelpayouts"),
+        "air_quality": write_silver(air_quality_df, "air_quality"),
+        "sea_temperature": write_silver(marine_df, "marine"),
+        "travel_advisory": write_silver(advisory_df, "state_dept"),
     }
     load_duckdb(tables)
     print(
         f"Loaded {len(weather_df)} weather rows, {len(holidays_df)} holiday rows, "
-        f"{len(flights_df)} flight-window rows, {len(price_df)} monthly-price rows into {DB_PATH}"
+        f"{len(flights_df)} flight-window rows, {len(price_df)} monthly-price rows, "
+        f"{len(air_quality_df)} air-quality rows, {len(marine_df)} sea-temperature rows, "
+        f"{len(advisory_df)} travel-advisory rows into {DB_PATH}"
     )
 
 

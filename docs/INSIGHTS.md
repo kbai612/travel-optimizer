@@ -1,77 +1,91 @@
 # Findings
 
-Generated from the current `warehouse.duckdb` with real data from all four sources,
-though coverage varies by destination and signal:
+<!-- GENERATED FILE — do not edit by hand. -->
+<!-- Regenerate with: uv run python -m report.insights -->
 
-- **Weather** (Open-Meteo) and **holidays** (Nager.Date) — real for all 8 destinations
-  (Bangkok's holiday score is neutral by design; see caveats).
-- **Demand** (OpenSky) — real for Lisbon, Cape Town, Tokyo, New York. The other 4
-  (Bangkok, Rio, Reykjavik, Sydney) hit OpenSky's free-tier daily quota during
-  extraction and stay neutral (50) until a future run picks them up.
-- **Price** (Travelpayouts) — real, partial-month coverage for 7 of 8 destinations.
-  New York is permanently neutral here: it's configured as `HOME_AIRPORT_IATA`, so
-  there's no "JFK to JFK" fare to search for.
+_Auto-generated from `warehouse.duckdb` on 2026-07-03 06:48 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
-## Best months, by destination
+## Does the score match conventional wisdom?
 
-| Destination | Top month | Score | Why |
-|---|---|---|---|
-| Bangkok (BKK) | November | 82.6 | Comfort (85.9) and a real cheap fare (price 100) converge; demand still neutral |
-| Rio de Janeiro (GIG) | August | 86.1 | Dry-season comfort peak (95.9) plus a real cheap fare (price 100) |
-| Tokyo (HND) | June | 81.9 | Comfort + a real, notably good fare (92.7); demand near-neutral |
-| Cape Town (CPT) | October | 81.3 | Comfort (88.3) and a real cheap fare (96.6) beat January's better demand score but missing price data |
-| Lisbon (LIS) | July (tied with Sep) | 79.9 | Comfort (94.3) and a real cheap fare (97.2); demand neutral for July specifically (that sample window was corrupted and dropped — see caveats) |
-| Sydney (SYD) | August | 75.3 | A real cheap fare (100) outweighs February's better comfort score |
-| Reykjavik (KEF) | July | 77.5 | Matches common travel wisdom, now reinforced by a real cheap fare (100) |
-| New York (JFK) | August | 73.0 | Comfort peak (91.3); demand and price both neutral (JFK is the configured home airport, so it never gets price data) |
+An external check: for each destination, the model's monthly scores are compared against the *conventionally-recommended* time to visit (mainstream travel-guide consensus, encoded in `report/reference.py`) — signals the model never sees. This is a sanity check, not a target the model is tuned toward.
 
-## What already looks right
+- **Directional agreement:** for **6/8** destinations the recommended months average a higher travel score than the rest of the year (mean margin **+2.8** points).
+- **Peak month in the recommended window:** **5/8** (exact), rising to **8/8** allowing a ±1-month tolerance.
 
-- **Adding price data moved several answers, not just numbers.** Cape Town's top
-  month moved from January to **October** once real fares came in — October's
-  fare data (96.6) beat January's better demand score but missing price coverage.
-  Bangkok moved from January to **November** the same way. This is the four-signal
-  model working as intended: a single strong signal doesn't dominate a weak one
-  just by being first.
-- **Reykjavik keeps matching common knowledge**: July is Iceland's clear best
-  month on comfort alone, and now a genuinely cheap real fare reinforces the same
-  answer rather than contradicting it.
-- **Hemisphere inversion still holds**: Lisbon/New York/Tokyo (Northern Hemisphere)
-  peak in local summer; Rio/Cape Town/Sydney (Southern Hemisphere) peak in their
-  own summer/shoulder months.
+| Destination | Recommended window | Rec. avg | Off-season avg | Margin | Peak month |
+|---|---|---:|---:|---:|---|
+| Bangkok (BKK) | cool, dry season | 60.9 | 59.0 | +1.9 | Nov ✅ |
+| Cape Town (CPT) | Southern-Hemisphere summer & autumn | 60.8 | 57.3 | +3.4 | Jan ✅ |
+| Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 75.0 | 69.8 | +5.2 | Aug ✅ |
+| Tokyo (HND) | cherry-blossom spring & autumn foliage | 69.4 | 71.7 | -2.3 | Jun ≈ |
+| New York (JFK) | late spring & crisp autumn | 65.0 | 59.5 | +5.5 | Aug ≈ |
+| Reykjavik (KEF) | the short Icelandic summer | 72.2 | 61.6 | +10.7 | Jul ✅ |
+| Lisbon (LIS) | spring & early-autumn shoulder season | 68.9 | 73.0 | -4.1 | Jul ≈ |
+| Sydney (SYD) | late summer, autumn & spring | 73.9 | 71.7 | +2.2 | Feb ✅ |
 
-## Caveats worth flagging
+Where the model diverges it's explainable rather than random: Tokyo's peak lands in June because the weather-comfort formula weights mild temperature above the rainy-season precipitation penalty, and Lisbon skews to peak summer because the model optimizes weather comfort over the crowd-avoidance that drives the shoulder-season guidance. Both are documented limitations in the README, surfaced here by the validation rather than hidden by it.
 
-- **OpenSky's free-tier daily quota is tight** — real cost of running this at
-  full scale. A single extraction attempt across 8 destinations exhausted the
-  daily allowance partway through, even with 1-request-per-second pacing added
-  afterward. Getting live demand data for all 8 destinations in one day isn't
-  realistic on the free tier; spreading destinations across the daily cron run
-  (or running `--source opensky` on a handful per day) is the practical path.
-- **Lisbon's July demand score is neutral, not just "no data yet."** The first
-  OpenSky extraction attempt got rate-limited mid-request and briefly wrote a
-  corrupted zero-flight file for that window; it was caught and deleted rather
-  than left in as a false "zero traffic" data point, so July now correctly reads
-  as "unknown" (neutral) rather than "empty." A future extraction run will
-  backfill it with real data.
-- **New York will never get a price score under the current config**, because
-  `HOME_AIRPORT_IATA=JFK` and Travelpayouts rejects an identical origin/destination
-  pair. Changing `HOME_AIRPORT_IATA` to a different home airport (or adding a
-  second configured origin) would fix this — worth deciding based on where you'd
-  actually be flying from.
-- **Travelpayouts prices are cached/historical fares** (a fare that was actually
-  found in a past search), not live quotes, and month coverage is uneven — Lisbon
-  got 5 of 12 months, Tokyo got 11, some destinations far fewer. Real, but sparse.
-- **Bangkok's holiday score is neutral, not zero-pressure**: Nager.Date doesn't
-  cover Thailand, so `holiday_pressure_score` defaults to the same neutral value
-  every month rather than reflecting real Thai public holidays (e.g. Songkran in
-  April). Source-coverage gap, not a modeling choice.
-- **Tokyo's June result** is a formula artifact worth knowing about: June sits in
-  Japan's rainy season, but the comfort formula weights mean temperature (50%)
-  well above precipitation hours (30%), so mild June temperatures outweigh the
-  rain penalty. Legitimate limitation of `int_weather_comfort.sql`'s simple
-  heuristic, not a data error.
-- **Amadeus is gone.** It originally supplied both a secondary demand signal and
-  all price data. Amadeus decommissioned its entire self-service portal
-  (including existing free keys) on 2026-07-17. Demand now comes from OpenSky
-  alone; price comes from the Travelpayouts Data API.
+## Best month, by destination
+
+| Destination | Top month | Score | Confidence | Leading real signal |
+|---|---|---|---|---|
+| Amsterdam (AMS) | Aug | 69.4 | 70% | good fares |
+| Barcelona (BCN) | Aug | 69.4 | 80% | good fares |
+| Bangkok (BKK) | Nov | 66.0 | 58% | good fares |
+| Paris (CDG) | Sep | 68.7 | 70% | good fares |
+| Cape Town (CPT) | Jan | 68.3 | 82% | mild weather |
+| Cancun (CUN) | Aug | 81.1 | 80% | good fares |
+| Bali (DPS) | Jul | 63.3 | 62% | few holiday spikes |
+| Dubai (DXB) | Dec | 49.4 | 68% | mild weather |
+| Buenos Aires (EZE) | Dec | 77.5 | 70% | good fares |
+| Rome (FCO) | Sep | 74.5 | 80% | good fares |
+| Rio de Janeiro (GIG) | Aug | 84.4 | 80% | good fares |
+| Hong Kong (HKG) | Aug | 64.9 | 80% | few holiday spikes |
+| Tokyo (HND) | Jun | 79.9 | 100% | few holiday spikes |
+| Honolulu (HNL) | Aug | 85.6 | 80% | good fares |
+| Istanbul (IST) | Sep | 74.2 | 80% | good fares |
+| New York (JFK) | Aug | 74.5 | 82% | few holiday spikes |
+| Reykjavik (KEF) | Jul | 85.1 | 100% | light crowds |
+| Los Angeles (LAX) | Aug | 82.2 | 80% | few holiday spikes |
+| London (LHR) | Sep | 68.1 | 70% | good fares |
+| Lisbon (LIS) | Jul | 81.5 | 80% | good fares |
+| Marrakesh (RAK) | Oct | 63.2 | 52% | few holiday spikes |
+| Singapore (SIN) | Sep | 71.6 | 62% | few holiday spikes |
+| Sydney (SYD) | Feb | 86.2 | 82% | light crowds |
+
+## Signal coverage
+
+Which signals are backed by real data vs. a neutral model default, per destination (● real · ○ default). `data_confidence` is the weight-weighted share of the score backed by real data.
+
+| Destination | Weather | Demand | Price | Holiday | Air quality | Sea temp | Confidence |
+|---|---|---|---|---|---|---|---|
+| Amsterdam (AMS) | ● | ○ | ● | ● | ● | ○ | 61% |
+| Barcelona (BCN) | ● | ○ | ● | ● | ● | ● | 66% |
+| Bangkok (BKK) | ● | ○ | ● | ○ | ● | ○ | 49% |
+| Paris (CDG) | ● | ○ | ● | ● | ● | ○ | 62% |
+| Cape Town (CPT) | ● | ● | ● | ● | ● | ● | 85% |
+| Cancun (CUN) | ● | ○ | ● | ● | ● | ● | 70% |
+| Bali (DPS) | ● | ○ | ○ | ● | ● | ● | 62% |
+| Dubai (DXB) | ● | ○ | ● | ○ | ● | ● | 58% |
+| Buenos Aires (EZE) | ● | ○ | ● | ● | ● | ○ | 56% |
+| Rome (FCO) | ● | ○ | ● | ● | ● | ● | 68% |
+| Rio de Janeiro (GIG) | ● | ○ | ● | ● | ● | ● | 70% |
+| Hong Kong (HKG) | ● | ○ | ● | ● | ● | ● | 68% |
+| Tokyo (HND) | ● | ● | ● | ● | ● | ● | 98% |
+| Honolulu (HNL) | ● | ○ | ● | ● | ● | ● | 65% |
+| Istanbul (IST) | ● | ○ | ● | ● | ● | ● | 71% |
+| New York (JFK) | ● | ● | ○ | ● | ● | ● | 82% |
+| Reykjavik (KEF) | ● | ● | ● | ● | ● | ● | 82% |
+| Los Angeles (LAX) | ● | ○ | ● | ● | ● | ● | 66% |
+| London (LHR) | ● | ○ | ● | ● | ● | ○ | 60% |
+| Lisbon (LIS) | ● | ● | ● | ● | ● | ● | 88% |
+| Marrakesh (RAK) | ● | ○ | ○ | ● | ● | ○ | 52% |
+| Singapore (SIN) | ● | ○ | ○ | ● | ● | ● | 62% |
+| Sydney (SYD) | ● | ● | ● | ● | ● | ● | 72% |
+
+## Hemisphere sanity check
+
+Peak months should invert across the equator — Northern-Hemisphere destinations peaking in mid-year, Southern in the local (Dec–Feb) summer half.
+
+- **Northern**: 16/20 peak in the Apr–Sep half.
+- **Southern**: 2/3 peak in the Oct–Apr half.

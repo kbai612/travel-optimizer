@@ -14,3 +14,11 @@ sources:
           (one representative 2-day window per calendar month, see extract/opensky.py).
       - name: price_monthly
         description: Cheapest-fare-by-month per destination from the Travelpayouts Data API.
+      - name: air_quality
+        description: Hourly PM2.5 observations per destination from the Open-Meteo Air Quality API (CAMS).
+      - name: sea_temperature
+        description: >
+          Hourly sea-surface temperature per destination from the Open-Meteo Marine API.
+          Absent for destinations with no nearby sea grid cell.
+      - name: travel_advisory
+        description: US State Department travel advisory level (1-4) per destination country.
