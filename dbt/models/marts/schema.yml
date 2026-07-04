@@ -28,8 +28,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('dim_destination')
-              field: iata
+              arguments:
+                to: ref('dim_destination')
+                field: iata
       - name: month
         tests:
           - not_null
@@ -45,14 +46,18 @@ models:
         tests:
           - not_null
       - name: has_price
-        description: True if price_score is real (Travelpayouts), false if defaulted to 50.
+        description: >
+          True if price_score is backed by real Travelpayouts fare data from the
+          daily calendar or monthly endpoint, false if defaulted to 50.
         tests:
           - not_null
       - name: avg_price
         description: >
-          Cheapest fare found for this destination/month (USD), unindexed. Null when
-          has_price is false — there's no neutral dollar default the way there is for
-          the 0-100 price_score.
+          Average observed fare for this destination/month (USD), unindexed.
+          Prefers day-level calendar fares averaged up to the month and falls
+          back to cached monthly fares when calendar coverage is absent. Null
+          when has_price is false — there's no neutral dollar default the way
+          there is for the 0-100 price_score.
       - name: has_holiday
         description: >
           True if this destination's country has any Nager.Date coverage at all, false

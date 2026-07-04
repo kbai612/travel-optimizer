@@ -20,8 +20,8 @@ from report.validation import ValidationSummary, validate
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = REPO_ROOT / "warehouse.duckdb"
 OUT_PATH = REPO_ROOT / "docs" / "INSIGHTS.md"
-# Small (96-row) committed mart snapshot the dashboard falls back to when there's no
-# local warehouse — this is what makes a hosted (Streamlit Cloud) demo work without
+# Small committed mart snapshot the dashboard falls back to when there's no local
+# warehouse — this is what makes a hosted (Streamlit Cloud) demo work without
 # shipping the gitignored *.duckdb or the bronze/silver data.
 SNAPSHOT_PATH = REPO_ROOT / "dashboard" / "snapshot" / "fct_travel_score.parquet"
 
@@ -135,8 +135,7 @@ def hemisphere_section(df: pd.DataFrame) -> str:
 
 def validation_summary(df: pd.DataFrame) -> ValidationSummary:
     scores_by_dest = {
-        iata: dict(zip(d["month"].astype(int), d["travel_score"]))
-        for iata, d in df.groupby("iata")
+        iata: dict(zip(d["month"].astype(int), d["travel_score"])) for iata, d in df.groupby("iata")
     }
     return validate(scores_by_dest)
 

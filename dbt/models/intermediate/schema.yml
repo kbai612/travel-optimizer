@@ -18,10 +18,91 @@ models:
     description: Per-destination, per-month OpenSky flight-volume index relative to that destination's own average, as a 0-100 demand score (inverted).
 
   - name: int_price_index
-    description: Per-destination, per-month Travelpayouts cheapest-fare index relative to that destination's own average, as a 0-100 price score.
+    description: >
+      Per-destination, per-month Travelpayouts fare index relative to that
+      destination's own average, as a 0-100 price score. Averages accumulated
+      snapshots for the latest origin, prefers day-level calendar fares rolled
+      up to the month, and falls back to cached monthly fares where calendar
+      coverage is absent.
 
   - name: int_air_quality
     description: Per-destination, per-month average PM2.5 and a 0-100 air-quality score, scored against the WHO annual guideline.
 
   - name: int_sea_temperature
     description: Per-destination, per-month average sea-surface temperature and a 0-100 swim-comfort score. No rows for destinations without a nearby sea grid cell.
+
+unit_tests:
+  - name: int_price_index_weights_daily_snapshots_equally
+    model: int_price_index
+    given:
+      - input: ref('stg_price_snapshot_manifest')
+        format: sql
+        rows: |
+          select 'travelpayouts_calendar' as snapshot_source, 'LIS' as iata, 'JFK' as origin, '2026-07-02' as collected_at
+          union all
+          select 'travelpayouts_calendar', 'LIS', 'JFK', '2026-07-03'
+      - input: ref('stg_price_daily')
+        format: csv
+        rows: |
+          iata,origin,period_year,period_month,price,collected_at
+          LIS,JFK,2026,7,100.0,2026-07-02
+          LIS,JFK,2026,7,200.0,2026-07-02
+          LIS,JFK,2026,7,300.0,2026-07-03
+      - input: ref('stg_price_monthly')
+        format: csv
+        rows: |
+          iata,origin,period_year,period_month,price,collected_at
+    expect:
+      rows:
+        - {iata: LIS, month: 7, avg_price: 225.0, dest_avg_price: 225.0, price_score: 100.0}
+
+  - name: int_price_index_uses_latest_origin_and_monthly_fallback
+    model: int_price_index
+    given:
+      - input: ref('stg_price_snapshot_manifest')
+        format: sql
+        rows: |
+          select 'travelpayouts_calendar' as snapshot_source, 'LIS' as iata, 'BOS' as origin, '2026-07-01' as collected_at
+          union all
+          select 'travelpayouts', 'LIS', 'JFK', '2026-07-03'
+      - input: ref('stg_price_daily')
+        format: csv
+        rows: |
+          iata,origin,period_year,period_month,price,collected_at
+          LIS,BOS,2026,7,50.0,2026-07-01
+          LIS,JFK,2026,7,100.0,2026-07-02
+          LIS,JFK,2026,7,200.0,2026-07-02
+          LIS,JFK,2026,7,300.0,2026-07-03
+      - input: ref('stg_price_monthly')
+        format: csv
+        rows: |
+          iata,origin,period_year,period_month,price,collected_at
+          LIS,BOS,2026,8,50.0,2026-07-01
+          LIS,JFK,2026,8,400.0,2026-07-03
+    expect:
+      rows:
+        - {iata: LIS, month: 7, avg_price: 225.0, dest_avg_price: 312.5, price_score: 100.0}
+        - {iata: LIS, month: 8, avg_price: 400.0, dest_avg_price: 312.5, price_score: 72.0}
+
+  - name: int_price_index_drops_stale_fares_when_latest_snapshot_is_empty
+    model: int_price_index
+    given:
+      - input: ref('stg_price_snapshot_manifest')
+        format: sql
+        rows: |
+          select 'travelpayouts_calendar' as snapshot_source, 'LIS' as iata, 'BOS' as origin, '2026-07-01' as collected_at
+          union all
+          select 'travelpayouts_calendar', 'LIS', 'JFK', '2026-07-03'
+          union all
+          select 'travelpayouts', 'LIS', 'JFK', '2026-07-03'
+      - input: ref('stg_price_daily')
+        format: csv
+        rows: |
+          iata,origin,period_year,period_month,price,collected_at
+          LIS,BOS,2026,7,50.0,2026-07-01
+      - input: ref('stg_price_monthly')
+        format: csv
+        rows: |
+          iata,origin,period_year,period_month,price,collected_at
+    expect:
+      rows: []

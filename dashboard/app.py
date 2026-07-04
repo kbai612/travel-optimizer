@@ -285,9 +285,7 @@ def score_bar_chart(dest_df: pd.DataFrame) -> go.Figure:
     fig.update_layout(
         template=None,
         font=dict(color=TEXT_PRIMARY),
-        yaxis=dict(
-            range=[0, 100], gridcolor=GRIDLINE, title="Travel score", linecolor=GRIDLINE
-        ),
+        yaxis=dict(range=[0, 100], gridcolor=GRIDLINE, title="Travel score", linecolor=GRIDLINE),
         xaxis=dict(title=None, linecolor=GRIDLINE, automargin=True),
         plot_bgcolor=SURFACE,
         paper_bgcolor=SURFACE,
@@ -317,9 +315,7 @@ def sub_score_chart(dest_df: pd.DataFrame) -> go.Figure:
     fig.update_layout(
         template=None,
         font=dict(color=TEXT_PRIMARY),
-        yaxis=dict(
-            range=[0, 100], gridcolor=GRIDLINE, title="Sub-score", linecolor=GRIDLINE
-        ),
+        yaxis=dict(range=[0, 100], gridcolor=GRIDLINE, title="Sub-score", linecolor=GRIDLINE),
         xaxis=dict(title=None, linecolor=GRIDLINE, automargin=True),
         plot_bgcolor=SURFACE,
         paper_bgcolor=SURFACE,
@@ -405,7 +401,7 @@ def price_chart(dest_df: pd.DataFrame, currency: str, symbol: str, fx_rate: floa
             range=[0, max_price * 1.15],
             gridcolor=GRIDLINE,
             linecolor=GRIDLINE,
-            title=f"Cheapest fare ({currency})",
+            title=f"Average observed fare ({currency})",
         ),
         xaxis=dict(title=None, linecolor=GRIDLINE, automargin=True),
         plot_bgcolor=SURFACE,
@@ -487,7 +483,9 @@ def render_when_view(
             delta=f"+{best_row['travel_score'] - avg_score:.0f} vs avg",
         )
     with kpi2.container(border=True):
-        st.metric("Timing matters", spread_label, delta=f"{spread:.0f} pt spread", delta_color="off")
+        st.metric(
+            "Timing matters", spread_label, delta=f"{spread:.0f} pt spread", delta_color="off"
+        )
     with kpi3.container(border=True):
         st.metric(f"Great months (≥{GREAT_SCORE_THRESHOLD})", f"{great_months}/12")
     with kpi4.container(border=True):
@@ -538,11 +536,14 @@ def render_when_view(
             price_chart(dest_df, currency, currency_symbol, fx_rate), width="stretch", theme=None
         )
         st.caption(
-            f"Cheapest fare found per month ({currency}), {HOME_AIRPORT_IATA} → {dest_iata}. "
-            "Blank months have no fare data yet. Converted from USD at a live exchange rate."
+            f"Average observed fare per month ({currency}), {HOME_AIRPORT_IATA} → {dest_iata}. "
+            "Prefers day-level calendar fares averaged up to the month and falls back to "
+            "cached monthly fares. Blank months have no fare data yet. Converted from USD "
+            "at a live exchange rate."
             if currency != "USD"
-            else f"Cheapest fare found per month (USD), {HOME_AIRPORT_IATA} → {dest_iata}. "
-            "Blank months have no fare data yet."
+            else f"Average observed fare per month (USD), {HOME_AIRPORT_IATA} → {dest_iata}. "
+            "Prefers day-level calendar fares averaged up to the month and falls back to "
+            "cached monthly fares. Blank months have no fare data yet."
         )
     else:
         st.info(
@@ -617,7 +618,7 @@ def render_where_view(
         lo, hi = int(priced.min()), int(priced.max())
         if hi > lo:
             budget = st.slider(
-                f"Max fare from {HOME_AIRPORT_IATA} ({currency})",
+                f"Max observed monthly fare from {HOME_AIRPORT_IATA} ({currency})",
                 min_value=lo,
                 max_value=hi,
                 value=hi,
@@ -689,9 +690,10 @@ SCORE_METHODOLOGY_MD = """
 - **Demand** *(inverse)* — OpenSky flight-volume seasonality, indexed against
   that destination's own average month. Neutral (50) until OpenSky credentials
   are configured — see `.env.example`.
-- **Price** *(inverse)* — Travelpayouts cheapest-fare-by-month, indexed against
-  that destination's own average month. Neutral (50) until a Travelpayouts
-  token is configured.
+- **Price** *(inverse)* — Travelpayouts fares indexed against that destination's
+  own average month. Prefers the day-level calendar endpoint averaged up to the
+  month and falls back to cached monthly fares. Neutral (50) until a
+  Travelpayouts token is configured.
 - **Holiday pressure** *(inverse)* — density of public holidays (Nager.Date)
   in that destination's country and month.
 - **Air quality** *(inverse)* — Open-Meteo Air Quality (CAMS) monthly PM2.5
@@ -744,9 +746,7 @@ with st.sidebar:
     if weight_total == 0:
         st.warning("All weights are zero — falling back to the defaults.")
         weights = dict(DEFAULT_WEIGHTS)
-    is_custom = any(
-        abs(weights[k] - DEFAULT_WEIGHTS[k]) > 1e-9 for k in DEFAULT_WEIGHTS
-    )
+    is_custom = any(abs(weights[k] - DEFAULT_WEIGHTS[k]) > 1e-9 for k in DEFAULT_WEIGHTS)
     if is_custom:
         norm = ", ".join(
             f"{label.split(' (')[0]} {weights[key] / sum(weights.values()) * 100:.0f}%"

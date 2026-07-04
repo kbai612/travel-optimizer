@@ -19,6 +19,63 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
+      # The Travelpayouts price snapshots are the one bronze source that must survive
+      # between runs: each run writes a fresh date-stamped snapshot, and the price index
+      # averages across all of them, so accuracy only improves if history persists. Every
+      # other extractor regenerates its full history each run, so it needs no persistence.
+      # data/ is gitignored (see below), so we stash just the price snapshots in GCS.
+      # All GCS steps no-op when GCS_BRONZE_BUCKET is unset, keeping the pipeline runnable
+      # without cloud storage configured.
+      - name: Authenticate to Google Cloud
+        if: vars.GCS_BRONZE_BUCKET != ''
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up gcloud
+        if: vars.GCS_BRONZE_BUCKET != ''
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Restore price snapshots from GCS
+        if: vars.GCS_BRONZE_BUCKET != ''
+        run: |
+          set -euo pipefail
+          mkdir -p data/bronze/travelpayouts data/bronze/travelpayouts_calendar
+          gcloud storage ls "gs://${{ vars.GCS_BRONZE_BUCKET }}" > /dev/null
+
+          restore_if_present() {
+            local remote_path="$1"
+            local local_path="$2"
+            local stderr_file
+            local status
+            local stderr_output
+
+            stderr_file="$(mktemp)"
+            set +e
+            gcloud storage ls "${remote_path}/**" > /dev/null 2>"$stderr_file"
+            status=$?
+            set -e
+
+            if [ "$status" -eq 0 ]; then
+              rm -f "$stderr_file"
+              gcloud storage rsync -r "$remote_path" "$local_path"
+              return
+            fi
+
+            stderr_output="$(cat "$stderr_file")"
+            rm -f "$stderr_file"
+
+            if [ "$status" -eq 1 ] && printf '%s' "$stderr_output" | grep -Eq 'matched no objects|One or more URLs matched no objects'; then
+              return
+            fi
+
+            printf '%s\n' "$stderr_output" >&2
+            return "$status"
+          }
+
+          restore_if_present "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts" data/bronze/travelpayouts
+          restore_if_present "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts_calendar" data/bronze/travelpayouts_calendar
+
       - name: Run extractors
         env:
           OPENSKY_CLIENT_ID: ${{ secrets.OPENSKY_CLIENT_ID }}
@@ -33,6 +90,12 @@ jobs:
       - name: dbt build
         working-directory: dbt
         run: uv run --project .. dbt build --profiles-dir .
+
+      - name: Persist price snapshots to GCS
+        if: vars.GCS_BRONZE_BUCKET != ''
+        run: |
+          gcloud storage rsync -r data/bronze/travelpayouts "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts"
+          gcloud storage rsync -r data/bronze/travelpayouts_calendar "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts_calendar"
 
       # docs/INSIGHTS.md and the dashboard demo snapshot are generated artifacts
       # (unlike data/ and *.duckdb, they're committed) — regenerate them from the
