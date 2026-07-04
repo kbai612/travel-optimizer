@@ -405,7 +405,7 @@ def price_chart(dest_df: pd.DataFrame, currency: str, symbol: str, fx_rate: floa
             range=[0, max_price * 1.15],
             gridcolor=GRIDLINE,
             linecolor=GRIDLINE,
-            title=f"Cheapest fare ({currency})",
+            title=f"Average observed fare ({currency})",
         ),
         xaxis=dict(title=None, linecolor=GRIDLINE, automargin=True),
         plot_bgcolor=SURFACE,
@@ -538,11 +538,14 @@ def render_when_view(
             price_chart(dest_df, currency, currency_symbol, fx_rate), width="stretch", theme=None
         )
         st.caption(
-            f"Cheapest fare found per month ({currency}), {HOME_AIRPORT_IATA} → {dest_iata}. "
-            "Blank months have no fare data yet. Converted from USD at a live exchange rate."
+            f"Average observed fare per month ({currency}), {HOME_AIRPORT_IATA} → {dest_iata}. "
+            "Prefers day-level calendar fares averaged up to the month and falls back to "
+            "cached monthly fares. Blank months have no fare data yet. Converted from USD "
+            "at a live exchange rate."
             if currency != "USD"
-            else f"Cheapest fare found per month (USD), {HOME_AIRPORT_IATA} → {dest_iata}. "
-            "Blank months have no fare data yet."
+            else f"Average observed fare per month (USD), {HOME_AIRPORT_IATA} → {dest_iata}. "
+            "Prefers day-level calendar fares averaged up to the month and falls back to "
+            "cached monthly fares. Blank months have no fare data yet."
         )
     else:
         st.info(
@@ -617,7 +620,7 @@ def render_where_view(
         lo, hi = int(priced.min()), int(priced.max())
         if hi > lo:
             budget = st.slider(
-                f"Max fare from {HOME_AIRPORT_IATA} ({currency})",
+                f"Max observed monthly fare from {HOME_AIRPORT_IATA} ({currency})",
                 min_value=lo,
                 max_value=hi,
                 value=hi,
@@ -689,9 +692,10 @@ SCORE_METHODOLOGY_MD = """
 - **Demand** *(inverse)* — OpenSky flight-volume seasonality, indexed against
   that destination's own average month. Neutral (50) until OpenSky credentials
   are configured — see `.env.example`.
-- **Price** *(inverse)* — Travelpayouts cheapest-fare-by-month, indexed against
-  that destination's own average month. Neutral (50) until a Travelpayouts
-  token is configured.
+- **Price** *(inverse)* — Travelpayouts fares indexed against that destination's
+  own average month. Prefers the day-level calendar endpoint averaged up to the
+  month and falls back to cached monthly fares. Neutral (50) until a
+  Travelpayouts token is configured.
 - **Holiday pressure** *(inverse)* — density of public holidays (Nager.Date)
   in that destination's country and month.
 - **Air quality** *(inverse)* — Open-Meteo Air Quality (CAMS) monthly PM2.5

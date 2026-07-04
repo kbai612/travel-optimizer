@@ -18,7 +18,12 @@ models:
     description: Per-destination, per-month OpenSky flight-volume index relative to that destination's own average, as a 0-100 demand score (inverted).
 
   - name: int_price_index
-    description: Per-destination, per-month Travelpayouts cheapest-fare index relative to that destination's own average, as a 0-100 price score.
+    description: >
+      Per-destination, per-month Travelpayouts fare index relative to that
+      destination's own average, as a 0-100 price score. Averages accumulated
+      snapshots for the latest origin, prefers day-level calendar fares rolled
+      up to the month, and falls back to cached monthly fares where calendar
+      coverage is absent.
 
   - name: int_air_quality
     description: Per-destination, per-month average PM2.5 and a 0-100 air-quality score, scored against the WHO annual guideline.

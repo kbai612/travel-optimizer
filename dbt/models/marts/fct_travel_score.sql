@@ -35,8 +35,8 @@ blended as (
         coalesce(w.weather_comfort_score, 50) as weather_comfort_score,
         coalesce(dm.demand_score, 50) as demand_score,
         coalesce(p.price_score, 50) as price_score,
-        -- Unindexed cheapest fare (USD), left null rather than defaulted — there's no
-        -- sensible neutral dollar figure the way there is for a 0-100 score.
+        -- Unindexed observed fare signal (USD), left null rather than defaulted —
+        -- there's no sensible neutral dollar figure the way there is for a 0-100 score.
         p.avg_price as avg_price,
         coalesce(h.holiday_pressure_score, 100) as holiday_pressure_score,
         coalesce(aq.air_quality_score, 50) as air_quality_score,

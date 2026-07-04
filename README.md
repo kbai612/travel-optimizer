@@ -84,7 +84,10 @@ uv sync
 Open-Meteo (weather, air quality, marine), Nager.Date, and the State Department
 advisory feed need no credentials. To pull flight and price data too, copy
 `.env.example` to `.env` and fill in free OpenSky + Travelpayouts credentials
-(see comments in that file for where to register).
+(see comments in that file for where to register). Keep `HOME_AIRPORT_IATA`
+stable if you want one continuous fare history: if you change origins later,
+the old snapshots stay on disk but the price index only uses the latest
+origin's snapshots so different departure airports never get mixed.
 
 ## Running the pipeline
 
@@ -116,8 +119,8 @@ changes.
 ## Deploy the dashboard
 
 The dashboard reads a live `warehouse.duckdb` when one is present, and otherwise
-falls back to `dashboard/snapshot/fct_travel_score.parquet` — a small (~14 KB),
-committed 96-row export of the mart. That snapshot is what makes a **zero-backend
+falls back to `dashboard/snapshot/fct_travel_score.parquet` — a small,
+committed export of the mart. That snapshot is what makes a **zero-backend
 hosted demo** possible: neither the warehouse nor the bronze/silver data is in git,
 but the snapshot is, so a fresh clone (or a cloud host) has something to show.
 
@@ -153,7 +156,8 @@ sea temperature 0.10 — these six must sum to 1.0):
   destination's own average month. Prefers the day-level calendar endpoint (averaged to
   a monthly figure) where available and falls back to the cheapest-fare-by-month endpoint.
   Both sources are date-stamped and accumulated across runs, so the index grows more
-  accurate the longer the pipeline runs.
+  accurate the longer the pipeline runs. Same-day re-runs naturally overwrite that
+  day's snapshot file; later days add new history.
 - **Holiday pressure** (`int_holiday_pressure`, inverted) — density of public
   holidays in the destination's country that month.
 - **Air quality** (`int_air_quality`, inverted) — monthly average PM2.5 from

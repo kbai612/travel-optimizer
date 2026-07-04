@@ -29,6 +29,11 @@ def _iter_bronze_files(source: str):
 
 
 def _load_dated_price_snapshot(path: Path) -> dict | None:
+    """Load a Travelpayouts snapshot only when it has the collected-at stamp.
+
+    Legacy undated files are ignored so only accumulated dated snapshots feed the
+    newer price-history models.
+    """
     payload = json.loads(path.read_text())
     if payload.get("collected_at") is None:
         return None
@@ -257,6 +262,12 @@ def flatten_price_daily() -> pd.DataFrame:
 
 
 def flatten_price_snapshot_manifest() -> pd.DataFrame:
+    """One row per dated Travelpayouts snapshot file, even when it contains no fares.
+
+    Downstream models use this to decide which origin's accumulated snapshots are
+    current and to treat an empty latest snapshot as "no data" rather than
+    falling back to stale fares from an older origin/run.
+    """
     rows = []
     for source in ("travelpayouts", "travelpayouts_calendar"):
         for iata, path in _iter_bronze_files(source):

@@ -42,35 +42,53 @@ models:
           - not_null
 
   - name: stg_price_monthly
-    description: Cheapest-fare-by-month per destination from the Travelpayouts Data API.
+    description: >
+      Cached cheapest-fare-by-month observations from Travelpayouts, with one row
+      per destination/month inside each dated snapshot.
     columns:
       - name: iata
         tests:
           - not_null
+      - name: origin
+        description: Departure airport used to collect this Travelpayouts snapshot.
       - name: period
         tests:
           - not_null
+      - name: collected_at
+        description: Snapshot collection date; multiple runs accumulate as multiple rows.
 
   - name: stg_price_daily
-    description: Cheapest-fare-by-day per destination from the Travelpayouts calendar endpoint.
+    description: >
+      Cached cheapest-fare-by-day observations from the Travelpayouts calendar
+      endpoint, covering the current month plus the next five months per run.
     columns:
       - name: iata
         tests:
           - not_null
+      - name: origin
+        description: Departure airport used to collect this Travelpayouts snapshot.
       - name: depart_date
         tests:
           - not_null
+      - name: collected_at
+        description: Snapshot collection date; multiple runs accumulate as multiple rows.
 
   - name: stg_price_snapshot_manifest
-    description: One row per Travelpayouts snapshot file, including empty snapshots.
+    description: >
+      One row per Travelpayouts snapshot file, including empty snapshots, so
+      downstream models can pick the latest origin/run without guessing from fare rows.
     columns:
       - name: snapshot_source
+        description: Which Travelpayouts bronze source produced the file.
         tests:
           - not_null
       - name: iata
         tests:
           - not_null
+      - name: origin
+        description: Departure airport recorded in the snapshot file.
       - name: collected_at
+        description: Snapshot collection date encoded in the filename/payload.
         tests:
           - not_null
 
