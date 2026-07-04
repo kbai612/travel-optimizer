@@ -46,9 +46,31 @@ jobs:
           restore_if_present() {
             local remote_path="$1"
             local local_path="$2"
-            if gcloud storage ls "${remote_path}/**" > /dev/null 2>&1; then
+            local stderr_file
+            local status
+            local stderr_output
+
+            stderr_file="$(mktemp)"
+            set +e
+            gcloud storage ls "${remote_path}/**" > /dev/null 2>"$stderr_file"
+            status=$?
+            set -e
+
+            if [ "$status" -eq 0 ]; then
+              rm -f "$stderr_file"
               gcloud storage rsync -r "$remote_path" "$local_path"
+              return
             fi
+
+            stderr_output="$(cat "$stderr_file")"
+            rm -f "$stderr_file"
+
+            if [ "$status" -eq 1 ] && printf '%s' "$stderr_output" | grep -Eq 'matched no objects|One or more URLs matched no objects'; then
+              return
+            fi
+
+            printf '%s\n' "$stderr_output" >&2
+            return "$status"
           }
 
           restore_if_present "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts" data/bronze/travelpayouts
@@ -62,21 +84,18 @@ jobs:
           HOME_AIRPORT_IATA: ${{ vars.HOME_AIRPORT_IATA }}
         run: uv run python -m extract.run --all
 
-      # Push today's fresh snapshot (plus everything restored above) back so the next
-      # run sees a growing history. Runs right after extract so the persisted copy is
-      # captured even if a later step fails.
-      - name: Persist price snapshots to GCS
-        if: vars.GCS_BRONZE_BUCKET != ''
-        run: |
-          gcloud storage rsync -r data/bronze/travelpayouts "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts"
-          gcloud storage rsync -r data/bronze/travelpayouts_calendar "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts_calendar"
-
       - name: Load warehouse
         run: uv run python -m warehouse.load
 
       - name: dbt build
         working-directory: dbt
         run: uv run --project .. dbt build --profiles-dir .
+
+      - name: Persist price snapshots to GCS
+        if: vars.GCS_BRONZE_BUCKET != ''
+        run: |
+          gcloud storage rsync -r data/bronze/travelpayouts "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts"
+          gcloud storage rsync -r data/bronze/travelpayouts_calendar "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts_calendar"
 
       # docs/INSIGHTS.md and the dashboard demo snapshot are generated artifacts
       # (unlike data/ and *.duckdb, they're committed) — regenerate them from the
