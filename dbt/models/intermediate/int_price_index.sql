@@ -1,18 +1,66 @@
--- Combine the two Travelpayouts fare sources into one monthly price signal per
--- destination. Daily calendar fares are strictly more granular, so where a destination
--- has calendar coverage for a (year, month) we use the average of its daily fares;
--- otherwise we fall back to the monthly-cheapest endpoint. Within each source, every
--- accumulated snapshot is averaged equally.
+with origin_history as (
+    select iata, origin, collected_at from {{ ref('stg_price_daily') }}
+    union all
+    select iata, origin, collected_at from {{ ref('stg_price_monthly') }}
+),
 
-with daily_rolled as (
+latest_origin as (
+    select
+        iata,
+        origin
+    from (
+        select
+            iata,
+            origin,
+            row_number() over (
+                partition by iata
+                order by collected_at desc, origin desc
+            ) as row_num
+        from origin_history
+        where origin is not null
+            and collected_at is not null
+    )
+    where row_num = 1
+),
+
+daily_snapshot_monthly as (
+    select
+        d.iata,
+        d.period_year,
+        d.period_month,
+        d.collected_at,
+        avg(d.price) as month_price
+    from {{ ref('stg_price_daily') }} d
+    inner join latest_origin o
+        on d.iata = o.iata
+        and d.origin = o.origin
+    where d.price is not null
+    group by 1, 2, 3, 4
+),
+
+daily_rolled as (
     select
         iata,
         period_year,
         period_month,
-        avg(price) as month_price
-    from {{ ref('stg_price_daily') }}
-    where price is not null
+        avg(month_price) as month_price
+    from daily_snapshot_monthly
     group by 1, 2, 3
+),
+
+monthly_snapshot_monthly as (
+    select
+        m.iata,
+        m.period_year,
+        m.period_month,
+        m.collected_at,
+        avg(m.price) as month_price
+    from {{ ref('stg_price_monthly') }} m
+    inner join latest_origin o
+        on m.iata = o.iata
+        and m.origin = o.origin
+    where m.price is not null
+    group by 1, 2, 3, 4
 ),
 
 monthly_rolled as (
@@ -20,14 +68,11 @@ monthly_rolled as (
         iata,
         period_year,
         period_month,
-        avg(price) as month_price
-    from {{ ref('stg_price_monthly') }}
-    where price is not null
+        avg(month_price) as month_price
+    from monthly_snapshot_monthly
     group by 1, 2, 3
 ),
 
--- One price per (iata, year, month): prefer daily, fall back to monthly where the
--- calendar endpoint has no coverage for that destination-month.
 combined as (
     select iata, period_year, period_month, month_price from daily_rolled
     union all
@@ -63,7 +108,6 @@ select
     month,
     avg_price,
     dest_avg_price,
-    -- Price score (0-100, higher = cheaper than this destination's own average month).
     round(
         greatest(0, least(100, 100 - (avg_price / nullif(dest_avg_price, 0) * 100 - 100))),
         1

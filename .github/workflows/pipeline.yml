@@ -39,9 +39,23 @@ jobs:
       - name: Restore price snapshots from GCS
         if: vars.GCS_BRONZE_BUCKET != ''
         run: |
+          set -euo pipefail
           mkdir -p data/bronze/travelpayouts data/bronze/travelpayouts_calendar
-          gcloud storage rsync -r "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts" data/bronze/travelpayouts || true
-          gcloud storage rsync -r "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts_calendar" data/bronze/travelpayouts_calendar || true
+          restore_if_present() {
+            local remote_path="$1"
+            local local_path="$2"
+            local listing
+
+            listing="$(gcloud storage ls "${remote_path}/**")"
+            if [ -z "$listing" ]; then
+              return 0
+            fi
+
+            gcloud storage rsync -r "$remote_path" "$local_path"
+          }
+
+          restore_if_present "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts" data/bronze/travelpayouts
+          restore_if_present "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts_calendar" data/bronze/travelpayouts_calendar
 
       - name: Run extractors
         env:
