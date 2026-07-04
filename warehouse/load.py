@@ -142,6 +142,14 @@ PRICE_MONTHLY_SCHEMA = {
     "origin": "string",
     "period": "string",
     "price": "Float64",
+    "collected_at": "string",
+}
+PRICE_DAILY_SCHEMA = {
+    "iata": "string",
+    "origin": "string",
+    "depart_date": "string",
+    "price": "Float64",
+    "collected_at": "string",
 }
 AIR_QUALITY_SCHEMA = {
     "iata": "string",
@@ -184,11 +192,16 @@ def flatten_flights() -> pd.DataFrame:
 
 
 def flatten_price_monthly() -> pd.DataFrame:
-    """One row per (destination, calendar month) — see extract/travelpayouts.py."""
+    """One row per (destination, calendar month, snapshot) — see extract/travelpayouts.py.
+
+    Each run writes a date-stamped snapshot, so accumulated snapshots yield multiple rows
+    per (iata, period); collected_at preserves which run each fare came from.
+    """
     rows = []
     for iata, path in _iter_bronze_files("travelpayouts"):
         payload = json.loads(path.read_text())
         origin = payload.get("origin")
+        collected_at = payload.get("collected_at")
         for period, fare in (payload.get("monthly") or {}).items():
             rows.append(
                 {
@@ -196,9 +209,34 @@ def flatten_price_monthly() -> pd.DataFrame:
                     "origin": origin,
                     "period": period,
                     "price": (fare or {}).get("price"),
+                    "collected_at": collected_at,
                 }
             )
     return _typed_frame(rows, PRICE_MONTHLY_SCHEMA)
+
+
+def flatten_price_daily() -> pd.DataFrame:
+    """One row per (destination, departure day, snapshot) — see extract/travelpayouts.py.
+
+    The calendar endpoint stores already-flattened {date: price} pairs, so each snapshot
+    contributes one row per day it covers across all accumulated snapshots.
+    """
+    rows = []
+    for iata, path in _iter_bronze_files("travelpayouts_calendar"):
+        payload = json.loads(path.read_text())
+        origin = payload.get("origin")
+        collected_at = payload.get("collected_at")
+        for depart_date, price in (payload.get("days") or {}).items():
+            rows.append(
+                {
+                    "iata": iata,
+                    "origin": origin,
+                    "depart_date": depart_date,
+                    "price": price,
+                    "collected_at": collected_at,
+                }
+            )
+    return _typed_frame(rows, PRICE_DAILY_SCHEMA)
 
 
 def write_silver(df: pd.DataFrame, source: str) -> Path:
@@ -230,6 +268,7 @@ def run() -> None:
 
     flights_df = flatten_flights()
     price_df = flatten_price_monthly()
+    price_daily_df = flatten_price_daily()
     air_quality_df = flatten_air_quality()
     marine_df = flatten_marine()
     advisory_df = flatten_travel_advisory()
@@ -239,6 +278,7 @@ def run() -> None:
         "holidays": write_silver(holidays_df, "nager"),
         "flights_sampled": write_silver(flights_df, "opensky"),
         "price_monthly": write_silver(price_df, "travelpayouts"),
+        "price_daily": write_silver(price_daily_df, "travelpayouts_calendar"),
         "air_quality": write_silver(air_quality_df, "air_quality"),
         "sea_temperature": write_silver(marine_df, "marine"),
         "travel_advisory": write_silver(advisory_df, "state_dept"),
@@ -247,6 +287,7 @@ def run() -> None:
     print(
         f"Loaded {len(weather_df)} weather rows, {len(holidays_df)} holiday rows, "
         f"{len(flights_df)} flight-window rows, {len(price_df)} monthly-price rows, "
+        f"{len(price_daily_df)} daily-price rows, "
         f"{len(air_quality_df)} air-quality rows, {len(marine_df)} sea-temperature rows, "
         f"{len(advisory_df)} travel-advisory rows into {DB_PATH}"
     )

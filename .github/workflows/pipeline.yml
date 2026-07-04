@@ -19,6 +19,30 @@ jobs:
       - name: Install dependencies
         run: uv sync --frozen
 
+      # The Travelpayouts price snapshots are the one bronze source that must survive
+      # between runs: each run writes a fresh date-stamped snapshot, and the price index
+      # averages across all of them, so accuracy only improves if history persists. Every
+      # other extractor regenerates its full history each run, so it needs no persistence.
+      # data/ is gitignored (see below), so we stash just the price snapshots in GCS.
+      # All GCS steps no-op when GCS_BRONZE_BUCKET is unset, keeping the pipeline runnable
+      # without cloud storage configured.
+      - name: Authenticate to Google Cloud
+        if: vars.GCS_BRONZE_BUCKET != ''
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up gcloud
+        if: vars.GCS_BRONZE_BUCKET != ''
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Restore price snapshots from GCS
+        if: vars.GCS_BRONZE_BUCKET != ''
+        run: |
+          mkdir -p data/bronze/travelpayouts data/bronze/travelpayouts_calendar
+          gcloud storage rsync -r "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts" data/bronze/travelpayouts || true
+          gcloud storage rsync -r "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts_calendar" data/bronze/travelpayouts_calendar || true
+
       - name: Run extractors
         env:
           OPENSKY_CLIENT_ID: ${{ secrets.OPENSKY_CLIENT_ID }}
@@ -26,6 +50,15 @@ jobs:
           TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
           HOME_AIRPORT_IATA: ${{ vars.HOME_AIRPORT_IATA }}
         run: uv run python -m extract.run --all
+
+      # Push today's fresh snapshot (plus everything restored above) back so the next
+      # run sees a growing history. Runs right after extract so the persisted copy is
+      # captured even if a later step fails.
+      - name: Persist price snapshots to GCS
+        if: vars.GCS_BRONZE_BUCKET != ''
+        run: |
+          gcloud storage rsync -r data/bronze/travelpayouts "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts"
+          gcloud storage rsync -r data/bronze/travelpayouts_calendar "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts_calendar"
 
       - name: Load warehouse
         run: uv run python -m warehouse.load

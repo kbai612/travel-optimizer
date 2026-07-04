@@ -42,7 +42,13 @@ dashboard for the output. See `docs/INSIGHTS.md` for current findings.
 - **Orchestration** (`.github/workflows/`) — `pipeline.yml` runs the full
   extract → load → dbt build chain on a daily cron (and manually via
   `workflow_dispatch`); `ci.yml` lints and runs a credential-free smoke test of
-  the whole DAG on every PR.
+  the whole DAG on every PR. Because each run starts from a clean checkout with an
+  empty `data/`, the daily job restores the Travelpayouts price snapshots from a GCS
+  bucket before extracting and pushes them back after, so the accumulated fare history
+  survives between runs (every other source regenerates its full history each run and
+  needs no persistence). Set repo **variable** `GCS_BRONZE_BUCKET` (bucket name) and
+  **secret** `GCP_SA_KEY` (service-account JSON with object read/write on that bucket)
+  to enable it; leave `GCS_BRONZE_BUCKET` unset and the persistence steps no-op.
 - **Serving** (`dashboard/app.py`) — Streamlit, two modes: **"When should I go?"**
   (pick a destination, see the score by month, sub-score breakdown, and a
   plain-language recommendation) and **"Where should I go?"** (fix a month plus
@@ -56,7 +62,7 @@ dashboard for the output. See `docs/INSIGHTS.md` for current findings.
 | Weather (3yr daily history) | [Open-Meteo](https://open-meteo.com/) Archive API | none |
 | Public holidays | [Nager.Date](https://date.nager.at/) | none |
 | Flight arrival/departure activity (demand) | [OpenSky Network](https://opensky-network.org/) | free account |
-| Fare seasonality (price) | [Travelpayouts Data API](https://www.travelpayouts.com/programs/100/tools/api) | free account |
+| Fare seasonality (price) | [Travelpayouts Data API](https://www.travelpayouts.com/programs/100/tools/api) — monthly + day-level calendar, accumulated across runs | free account |
 | Air quality (PM2.5, 3yr hourly history) | [Open-Meteo Air Quality API](https://open-meteo.com/en/docs/air-quality-api) | none |
 | Sea-surface temperature (3yr hourly history) | [Open-Meteo Marine API](https://open-meteo.com/en/docs/marine-weather-api) | none |
 | Travel advisory level (per country) | [US State Dept Travel Advisories](https://cadataapi.state.gov/api/TravelAdvisories) | none |
@@ -143,8 +149,11 @@ sea temperature 0.10 — these six must sum to 1.0):
   35°C day and a dry 35°C day no longer score the same.
 - **Demand** (`int_demand_index`, inverted) — OpenSky's relative flight-volume
   index for that destination; a below-average-traffic month scores higher.
-- **Price** (`int_price_index`, inverted) — Travelpayouts cheapest-fare-by-month,
-  indexed against that destination's own average month.
+- **Price** (`int_price_index`, inverted) — Travelpayouts fares indexed against that
+  destination's own average month. Prefers the day-level calendar endpoint (averaged to
+  a monthly figure) where available and falls back to the cheapest-fare-by-month endpoint.
+  Both sources are date-stamped and accumulated across runs, so the index grows more
+  accurate the longer the pipeline runs.
 - **Holiday pressure** (`int_holiday_pressure`, inverted) — density of public
   holidays in the destination's country that month.
 - **Air quality** (`int_air_quality`, inverted) — monthly average PM2.5 from
@@ -176,7 +185,9 @@ to documented formula behavior rather than random error — see below.
 
 - **Travelpayouts prices are cached/historical fares**, not live quotes — a real
   fare-search API (e.g. a paid Amadeus Enterprise key, or Google Flights via
-  SerpApi) would give more current pricing, at a cost.
+  SerpApi) would give more current pricing, at a cost. Accumulating date-stamped
+  snapshots mitigates this: each run adds observations rather than overwriting, so the
+  price index converges on a fuller picture over time.
 - **OpenSky sampling** — the API only accepts windows spanning 2 day partitions
   (a documented-elsewhere 7-day window is rejected), so `extract/opensky.py`
   samples one representative 2-day window per calendar month instead of every day.

@@ -51,6 +51,16 @@ models:
         tests:
           - not_null
 
+  - name: stg_price_daily
+    description: Cheapest-fare-by-day per destination from the Travelpayouts calendar endpoint.
+    columns:
+      - name: iata
+        tests:
+          - not_null
+      - name: depart_date
+        tests:
+          - not_null
+
   - name: stg_air_quality
     description: Hourly PM2.5 observations per destination from Open-Meteo.
     columns:
