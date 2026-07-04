@@ -135,8 +135,7 @@ def hemisphere_section(df: pd.DataFrame) -> str:
 
 def validation_summary(df: pd.DataFrame) -> ValidationSummary:
     scores_by_dest = {
-        iata: dict(zip(d["month"].astype(int), d["travel_score"]))
-        for iata, d in df.groupby("iata")
+        iata: dict(zip(d["month"].astype(int), d["travel_score"])) for iata, d in df.groupby("iata")
     }
     return validate(scores_by_dest)
 

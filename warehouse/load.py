@@ -63,7 +63,9 @@ def flatten_weather() -> pd.DataFrame:
                         if apparent_max is not None and apparent_min is not None
                         else None
                     ),
-                    "sunshine_hours": sunshine_seconds / 3600 if sunshine_seconds is not None else None,
+                    "sunshine_hours": sunshine_seconds / 3600
+                    if sunshine_seconds is not None
+                    else None,
                 }
             )
     return pd.DataFrame(rows)
@@ -308,9 +310,13 @@ def run() -> None:
     weather_df = flatten_weather()
     holidays_df = flatten_holidays()
     if weather_df.empty:
-        raise SystemExit("No weather bronze data — run `python -m extract.run --source open_meteo` first.")
+        raise SystemExit(
+            "No weather bronze data — run `python -m extract.run --source open_meteo` first."
+        )
     if holidays_df.empty:
-        raise SystemExit("No holiday bronze data — run `python -m extract.run --source nager` first.")
+        raise SystemExit(
+            "No holiday bronze data — run `python -m extract.run --source nager` first."
+        )
 
     flights_df = flatten_flights()
     price_df = flatten_price_monthly()

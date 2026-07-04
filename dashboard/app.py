@@ -285,9 +285,7 @@ def score_bar_chart(dest_df: pd.DataFrame) -> go.Figure:
     fig.update_layout(
         template=None,
         font=dict(color=TEXT_PRIMARY),
-        yaxis=dict(
-            range=[0, 100], gridcolor=GRIDLINE, title="Travel score", linecolor=GRIDLINE
-        ),
+        yaxis=dict(range=[0, 100], gridcolor=GRIDLINE, title="Travel score", linecolor=GRIDLINE),
         xaxis=dict(title=None, linecolor=GRIDLINE, automargin=True),
         plot_bgcolor=SURFACE,
         paper_bgcolor=SURFACE,
@@ -317,9 +315,7 @@ def sub_score_chart(dest_df: pd.DataFrame) -> go.Figure:
     fig.update_layout(
         template=None,
         font=dict(color=TEXT_PRIMARY),
-        yaxis=dict(
-            range=[0, 100], gridcolor=GRIDLINE, title="Sub-score", linecolor=GRIDLINE
-        ),
+        yaxis=dict(range=[0, 100], gridcolor=GRIDLINE, title="Sub-score", linecolor=GRIDLINE),
         xaxis=dict(title=None, linecolor=GRIDLINE, automargin=True),
         plot_bgcolor=SURFACE,
         paper_bgcolor=SURFACE,
@@ -487,7 +483,9 @@ def render_when_view(
             delta=f"+{best_row['travel_score'] - avg_score:.0f} vs avg",
         )
     with kpi2.container(border=True):
-        st.metric("Timing matters", spread_label, delta=f"{spread:.0f} pt spread", delta_color="off")
+        st.metric(
+            "Timing matters", spread_label, delta=f"{spread:.0f} pt spread", delta_color="off"
+        )
     with kpi3.container(border=True):
         st.metric(f"Great months (≥{GREAT_SCORE_THRESHOLD})", f"{great_months}/12")
     with kpi4.container(border=True):
@@ -748,9 +746,7 @@ with st.sidebar:
     if weight_total == 0:
         st.warning("All weights are zero — falling back to the defaults.")
         weights = dict(DEFAULT_WEIGHTS)
-    is_custom = any(
-        abs(weights[k] - DEFAULT_WEIGHTS[k]) > 1e-9 for k in DEFAULT_WEIGHTS
-    )
+    is_custom = any(abs(weights[k] - DEFAULT_WEIGHTS[k]) > 1e-9 for k in DEFAULT_WEIGHTS)
     if is_custom:
         norm = ", ".join(
             f"{label.split(' (')[0]} {weights[key] / sum(weights.values()) * 100:.0f}%"

@@ -69,7 +69,9 @@ def fetch_monthly_prices(client: httpx.Client, origin: str, destination: str) ->
     try:
         payload = get_json(client, MONTHLY_PRICES_URL, params=params) or {}
     except ApiError as exc:
-        logger.warning("Travelpayouts monthly prices failed for %s->%s: %s", origin, destination, exc)
+        logger.warning(
+            "Travelpayouts monthly prices failed for %s->%s: %s", origin, destination, exc
+        )
         return {}
     return payload.get("data", {}) if payload.get("success") else {}
 
@@ -107,7 +109,9 @@ def run(destinations: list[Destination] | None = None) -> None:
                 # a guaranteed 400 (Travelpayouts rejects origin == destination).
                 monthly: dict = {}
                 days: dict = {}
-                print(f"[travelpayouts] {dest.name} ({dest.iata}) skipped: same as HOME_AIRPORT_IATA")
+                print(
+                    f"[travelpayouts] {dest.name} ({dest.iata}) skipped: same as HOME_AIRPORT_IATA"
+                )
             else:
                 monthly = fetch_monthly_prices(client, HOME_AIRPORT_IATA, dest.iata)
                 days = {}
@@ -119,15 +123,21 @@ def run(destinations: list[Destination] | None = None) -> None:
                         if price is not None:
                             days[day] = price
 
-            monthly_path = bronze_path("travelpayouts", dest.iata, f"monthly_prices_{collected_at}.json")
+            monthly_path = bronze_path(
+                "travelpayouts", dest.iata, f"monthly_prices_{collected_at}.json"
+            )
             monthly_path.write_text(
-                json.dumps({"origin": HOME_AIRPORT_IATA, "collected_at": collected_at, "monthly": monthly})
+                json.dumps(
+                    {"origin": HOME_AIRPORT_IATA, "collected_at": collected_at, "monthly": monthly}
+                )
             )
             calendar_path = bronze_path(
                 "travelpayouts_calendar", dest.iata, f"calendar_{collected_at}.json"
             )
             calendar_path.write_text(
-                json.dumps({"origin": HOME_AIRPORT_IATA, "collected_at": collected_at, "days": days})
+                json.dumps(
+                    {"origin": HOME_AIRPORT_IATA, "collected_at": collected_at, "days": days}
+                )
             )
             if not same_as_home:
                 print(

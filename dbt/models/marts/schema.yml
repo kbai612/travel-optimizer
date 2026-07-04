@@ -28,8 +28,9 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('dim_destination')
-              field: iata
+              arguments:
+                to: ref('dim_destination')
+                field: iata
       - name: month
         tests:
           - not_null
