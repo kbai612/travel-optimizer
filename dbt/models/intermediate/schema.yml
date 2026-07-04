@@ -30,6 +30,12 @@ unit_tests:
   - name: int_price_index_weights_daily_snapshots_equally
     model: int_price_index
     given:
+      - input: ref('stg_price_snapshot_manifest')
+        format: sql
+        rows: |
+          select 'travelpayouts_calendar' as snapshot_source, 'LIS' as iata, 'JFK' as origin, '2026-07-02' as collected_at
+          union all
+          select 'travelpayouts_calendar', 'LIS', 'JFK', '2026-07-03'
       - input: ref('stg_price_daily')
         format: csv
         rows: |
@@ -48,6 +54,12 @@ unit_tests:
   - name: int_price_index_uses_latest_origin_and_monthly_fallback
     model: int_price_index
     given:
+      - input: ref('stg_price_snapshot_manifest')
+        format: sql
+        rows: |
+          select 'travelpayouts_calendar' as snapshot_source, 'LIS' as iata, 'BOS' as origin, '2026-07-01' as collected_at
+          union all
+          select 'travelpayouts', 'LIS', 'JFK', '2026-07-03'
       - input: ref('stg_price_daily')
         format: csv
         rows: |
@@ -66,3 +78,26 @@ unit_tests:
       rows:
         - {iata: LIS, month: 7, avg_price: 225.0, dest_avg_price: 312.5, price_score: 100.0}
         - {iata: LIS, month: 8, avg_price: 400.0, dest_avg_price: 312.5, price_score: 72.0}
+
+  - name: int_price_index_drops_stale_fares_when_latest_snapshot_is_empty
+    model: int_price_index
+    given:
+      - input: ref('stg_price_snapshot_manifest')
+        format: sql
+        rows: |
+          select 'travelpayouts_calendar' as snapshot_source, 'LIS' as iata, 'BOS' as origin, '2026-07-01' as collected_at
+          union all
+          select 'travelpayouts_calendar', 'LIS', 'JFK', '2026-07-03'
+          union all
+          select 'travelpayouts', 'LIS', 'JFK', '2026-07-03'
+      - input: ref('stg_price_daily')
+        format: csv
+        rows: |
+          iata,origin,period_year,period_month,price,collected_at
+          LIS,BOS,2026,7,50.0,2026-07-01
+      - input: ref('stg_price_monthly')
+        format: csv
+        rows: |
+          iata,origin,period_year,period_month,price,collected_at
+    expect:
+      rows: []

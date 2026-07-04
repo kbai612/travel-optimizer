@@ -151,6 +151,12 @@ PRICE_DAILY_SCHEMA = {
     "price": "Float64",
     "collected_at": "string",
 }
+PRICE_SNAPSHOT_MANIFEST_SCHEMA = {
+    "snapshot_source": "string",
+    "iata": "string",
+    "origin": "string",
+    "collected_at": "string",
+}
 AIR_QUALITY_SCHEMA = {
     "iata": "string",
     "observed_at": "string",
@@ -239,6 +245,22 @@ def flatten_price_daily() -> pd.DataFrame:
     return _typed_frame(rows, PRICE_DAILY_SCHEMA)
 
 
+def flatten_price_snapshot_manifest() -> pd.DataFrame:
+    rows = []
+    for source in ("travelpayouts", "travelpayouts_calendar"):
+        for iata, path in _iter_bronze_files(source):
+            payload = json.loads(path.read_text())
+            rows.append(
+                {
+                    "snapshot_source": source,
+                    "iata": iata,
+                    "origin": payload.get("origin"),
+                    "collected_at": payload.get("collected_at"),
+                }
+            )
+    return _typed_frame(rows, PRICE_SNAPSHOT_MANIFEST_SCHEMA)
+
+
 def write_silver(df: pd.DataFrame, source: str) -> Path:
     out_dir = SILVER_DIR / source
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -269,6 +291,7 @@ def run() -> None:
     flights_df = flatten_flights()
     price_df = flatten_price_monthly()
     price_daily_df = flatten_price_daily()
+    price_snapshot_manifest_df = flatten_price_snapshot_manifest()
     air_quality_df = flatten_air_quality()
     marine_df = flatten_marine()
     advisory_df = flatten_travel_advisory()
@@ -279,6 +302,9 @@ def run() -> None:
         "flights_sampled": write_silver(flights_df, "opensky"),
         "price_monthly": write_silver(price_df, "travelpayouts"),
         "price_daily": write_silver(price_daily_df, "travelpayouts_calendar"),
+        "price_snapshot_manifest": write_silver(
+            price_snapshot_manifest_df, "price_snapshot_manifest"
+        ),
         "air_quality": write_silver(air_quality_df, "air_quality"),
         "sea_temperature": write_silver(marine_df, "marine"),
         "travel_advisory": write_silver(advisory_df, "state_dept"),
@@ -288,6 +314,7 @@ def run() -> None:
         f"Loaded {len(weather_df)} weather rows, {len(holidays_df)} holiday rows, "
         f"{len(flights_df)} flight-window rows, {len(price_df)} monthly-price rows, "
         f"{len(price_daily_df)} daily-price rows, "
+        f"{len(price_snapshot_manifest_df)} price-snapshot rows, "
         f"{len(air_quality_df)} air-quality rows, {len(marine_df)} sea-temperature rows, "
         f"{len(advisory_df)} travel-advisory rows into {DB_PATH}"
     )

@@ -41,17 +41,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p data/bronze/travelpayouts data/bronze/travelpayouts_calendar
+          gcloud storage ls "gs://${{ vars.GCS_BRONZE_BUCKET }}" > /dev/null
+
           restore_if_present() {
             local remote_path="$1"
             local local_path="$2"
-            local listing
-
-            listing="$(gcloud storage ls "${remote_path}/**")"
-            if [ -z "$listing" ]; then
-              return 0
-            fi
-
-            gcloud storage rsync -r "$remote_path" "$local_path"
+            gcloud storage rsync -r "$remote_path" "$local_path" || true
           }
 
           restore_if_present "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts" data/bronze/travelpayouts

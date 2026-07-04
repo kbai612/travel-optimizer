@@ -20,6 +20,10 @@ sources:
         description: >
           Cheapest-fare-by-day per destination from the Travelpayouts calendar endpoint
           (next 6 months per run), accumulated across dated snapshots.
+      - name: price_snapshot_manifest
+        description: >
+          One row per persisted Travelpayouts snapshot file, including empty snapshots,
+          carrying the destination, origin, source, and collection date.
       - name: air_quality
         description: Hourly PM2.5 observations per destination from the Open-Meteo Air Quality API (CAMS).
       - name: sea_temperature

@@ -1,5 +1,4 @@
-"""Tests for the Travelpayouts extractor's month-window helper and the calendar
-(daily-price) bronze->silver flattening."""
+"""Tests for the Travelpayouts extractor's month-window helper and bronze->silver loading."""
 
 import json
 from datetime import date
@@ -42,3 +41,30 @@ def test_flatten_price_daily_round_trips_snapshots(tmp_path, monkeypatch) -> Non
     assert set(df["collected_at"]) == {"2026-07-03"}
     assert sorted(df["depart_date"]) == ["2026-07-01", "2026-07-02"]
     assert df.loc[df["depart_date"] == "2026-07-01", "price"].iloc[0] == 412.0
+
+
+def test_flatten_price_snapshot_manifest_keeps_empty_snapshots(tmp_path, monkeypatch) -> None:
+    import warehouse.load as load
+
+    monkeypatch.setattr(load, "BRONZE_DIR", tmp_path)
+
+    monthly_dir = tmp_path / "travelpayouts" / "LIS"
+    monthly_dir.mkdir(parents=True)
+    (monthly_dir / "monthly_prices_2026-07-03.json").write_text(
+        json.dumps({"origin": "JFK", "collected_at": "2026-07-03", "monthly": {}})
+    )
+
+    calendar_dir = tmp_path / "travelpayouts_calendar" / "LIS"
+    calendar_dir.mkdir(parents=True)
+    (calendar_dir / "calendar_2026-07-03.json").write_text(
+        json.dumps({"origin": "JFK", "collected_at": "2026-07-03", "days": {}})
+    )
+
+    df = load.flatten_price_snapshot_manifest()
+
+    assert list(df.columns) == ["snapshot_source", "iata", "origin", "collected_at"]
+    assert len(df) == 2
+    assert set(df["snapshot_source"]) == {"travelpayouts", "travelpayouts_calendar"}
+    assert set(df["iata"]) == {"LIS"}
+    assert set(df["origin"]) == {"JFK"}
+    assert set(df["collected_at"]) == {"2026-07-03"}

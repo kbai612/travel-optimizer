@@ -1,10 +1,4 @@
-with origin_history as (
-    select iata, origin, collected_at from {{ ref('stg_price_daily') }}
-    union all
-    select iata, origin, collected_at from {{ ref('stg_price_monthly') }}
-),
-
-latest_origin as (
+with latest_origin as (
     select
         iata,
         origin
@@ -14,9 +8,9 @@ latest_origin as (
             origin,
             row_number() over (
                 partition by iata
-                order by collected_at desc, origin desc
+                order by collected_at desc, snapshot_source desc, origin desc
             ) as row_num
-        from origin_history
+        from {{ ref('stg_price_snapshot_manifest') }}
         where origin is not null
             and collected_at is not null
     )
