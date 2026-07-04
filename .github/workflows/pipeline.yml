@@ -46,7 +46,9 @@ jobs:
           restore_if_present() {
             local remote_path="$1"
             local local_path="$2"
-            gcloud storage rsync -r "$remote_path" "$local_path" || true
+            if gcloud storage ls "${remote_path}/**" > /dev/null 2>&1; then
+              gcloud storage rsync -r "$remote_path" "$local_path"
+            fi
           }
 
           restore_if_present "gs://${{ vars.GCS_BRONZE_BUCKET }}/travelpayouts" data/bronze/travelpayouts

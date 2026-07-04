@@ -68,3 +68,54 @@ def test_flatten_price_snapshot_manifest_keeps_empty_snapshots(tmp_path, monkeyp
     assert set(df["iata"]) == {"LIS"}
     assert set(df["origin"]) == {"JFK"}
     assert set(df["collected_at"]) == {"2026-07-03"}
+
+
+def test_price_loaders_skip_legacy_undated_snapshots(tmp_path, monkeypatch) -> None:
+    import warehouse.load as load
+
+    monkeypatch.setattr(load, "BRONZE_DIR", tmp_path)
+
+    monthly_dir = tmp_path / "travelpayouts" / "LIS"
+    monthly_dir.mkdir(parents=True)
+    (monthly_dir / "monthly_prices.json").write_text(
+        json.dumps({"origin": "JFK", "monthly": {"2026-08": {"price": 499.0}}})
+    )
+    (monthly_dir / "monthly_prices_2026-07-03.json").write_text(
+        json.dumps(
+            {
+                "origin": "JFK",
+                "collected_at": "2026-07-03",
+                "monthly": {"2026-08": {"price": 412.0}},
+            }
+        )
+    )
+
+    calendar_dir = tmp_path / "travelpayouts_calendar" / "LIS"
+    calendar_dir.mkdir(parents=True)
+    (calendar_dir / "calendar.json").write_text(
+        json.dumps({"origin": "JFK", "days": {"2026-07-01": 555.0}})
+    )
+    (calendar_dir / "calendar_2026-07-03.json").write_text(
+        json.dumps(
+            {
+                "origin": "JFK",
+                "collected_at": "2026-07-03",
+                "days": {"2026-07-01": 388.5},
+            }
+        )
+    )
+
+    monthly_df = load.flatten_price_monthly()
+    daily_df = load.flatten_price_daily()
+    manifest_df = load.flatten_price_snapshot_manifest()
+
+    assert len(monthly_df) == 1
+    assert monthly_df["price"].iloc[0] == 412.0
+    assert set(monthly_df["collected_at"]) == {"2026-07-03"}
+
+    assert len(daily_df) == 1
+    assert daily_df["price"].iloc[0] == 388.5
+    assert set(daily_df["collected_at"]) == {"2026-07-03"}
+
+    assert len(manifest_df) == 2
+    assert set(manifest_df["collected_at"]) == {"2026-07-03"}

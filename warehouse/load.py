@@ -28,6 +28,13 @@ def _iter_bronze_files(source: str):
             yield iata_dir.name, path
 
 
+def _load_dated_price_snapshot(path: Path) -> dict | None:
+    payload = json.loads(path.read_text())
+    if payload.get("collected_at") is None:
+        return None
+    return payload
+
+
 def flatten_weather() -> pd.DataFrame:
     rows = []
     for iata, path in _iter_bronze_files("open_meteo"):
@@ -205,7 +212,9 @@ def flatten_price_monthly() -> pd.DataFrame:
     """
     rows = []
     for iata, path in _iter_bronze_files("travelpayouts"):
-        payload = json.loads(path.read_text())
+        payload = _load_dated_price_snapshot(path)
+        if payload is None:
+            continue
         origin = payload.get("origin")
         collected_at = payload.get("collected_at")
         for period, fare in (payload.get("monthly") or {}).items():
@@ -229,7 +238,9 @@ def flatten_price_daily() -> pd.DataFrame:
     """
     rows = []
     for iata, path in _iter_bronze_files("travelpayouts_calendar"):
-        payload = json.loads(path.read_text())
+        payload = _load_dated_price_snapshot(path)
+        if payload is None:
+            continue
         origin = payload.get("origin")
         collected_at = payload.get("collected_at")
         for depart_date, price in (payload.get("days") or {}).items():
@@ -249,7 +260,9 @@ def flatten_price_snapshot_manifest() -> pd.DataFrame:
     rows = []
     for source in ("travelpayouts", "travelpayouts_calendar"):
         for iata, path in _iter_bronze_files(source):
-            payload = json.loads(path.read_text())
+            payload = _load_dated_price_snapshot(path)
+            if payload is None:
+                continue
             rows.append(
                 {
                     "snapshot_source": source,
