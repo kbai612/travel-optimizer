@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-07-10 10:20 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-07-11 09:02 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -14,9 +14,9 @@ An external check: for each destination, the model's monthly scores are compared
 
 | Destination | Recommended window | Rec. avg | Off-season avg | Margin | Peak month |
 |---|---|---:|---:|---:|---|
-| Bangkok (BKK) | cool, dry season | 73.0 | 69.7 | +3.3 | Nov ✅ |
+| Bangkok (BKK) | cool, dry season | 73.1 | 69.7 | +3.4 | Nov ✅ |
 | Cape Town (CPT) | Southern-Hemisphere summer & autumn | 62.6 | 57.4 | +5.2 | Jan ✅ |
-| Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 65.0 | 59.3 | +5.7 | Sep ✅ |
+| Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 65.0 | 59.3 | +5.7 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.1 | 70.6 | +0.5 | Jun ≈ |
 | New York (JFK) | late spring & crisp autumn | 68.6 | 60.7 | +7.9 | Sep ✅ |
 | Reykjavik (KEF) | the short Icelandic summer | 68.3 | 52.0 | +16.3 | Jul ✅ |
@@ -36,12 +36,12 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Cape Town (CPT) | Jan | 74.9 | 100% | mild weather |
 | Cancun (CUN) | Feb | 82.7 | 80% | good fares |
 | Bali (DPS) | Jul | 71.0 | 80% | good fares |
-| Dubai (DXB) | Dec | 49.8 | 68% | mild weather |
+| Dubai (DXB) | Dec | 49.5 | 68% | mild weather |
 | Buenos Aires (EZE) | Sep | 79.7 | 70% | good fares |
 | Rome (FCO) | Sep | 74.4 | 80% | few holiday spikes |
-| Rio de Janeiro (GIG) | Sep | 68.4 | 80% | good fares |
+| Rio de Janeiro (GIG) | Aug | 68.4 | 80% | few holiday spikes |
 | Hong Kong (HKG) | Aug | 66.1 | 80% | good fares |
-| Tokyo (HND) | Jun | 78.9 | 100% | few holiday spikes |
+| Tokyo (HND) | Jun | 79.0 | 100% | few holiday spikes |
 | Honolulu (HNL) | Aug | 85.6 | 80% | good fares |
 | Istanbul (IST) | Sep | 74.2 | 80% | good fares |
 | New York (JFK) | Sep | 81.6 | 100% | good fares |
@@ -51,7 +51,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Lisbon (LIS) | Sep | 80.9 | 100% | good fares |
 | Marrakesh (RAK) | Oct | 63.2 | 52% | few holiday spikes |
 | Singapore (SIN) | Sep | 80.6 | 80% | good fares |
-| Sydney (SYD) | Dec | 76.7 | 100% | good fares |
+| Sydney (SYD) | Dec | 76.6 | 100% | mild weather |
 
 ## Signal coverage
 
@@ -66,7 +66,7 @@ Which signals are backed by real data vs. a neutral model default, per destinati
 | Cape Town (CPT) | ● | ● | ● | ● | ● | ● | 88% |
 | Cancun (CUN) | ● | ○ | ● | ● | ● | ● | 72% |
 | Bali (DPS) | ● | ○ | ● | ● | ● | ● | 66% |
-| Dubai (DXB) | ● | ○ | ● | ○ | ● | ● | 58% |
+| Dubai (DXB) | ● | ○ | ● | ○ | ● | ● | 59% |
 | Buenos Aires (EZE) | ● | ○ | ● | ● | ● | ○ | 58% |
 | Rome (FCO) | ● | ○ | ● | ● | ● | ● | 71% |
 | Rio de Janeiro (GIG) | ● | ○ | ● | ● | ● | ● | 71% |
