@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-09-18 12:08 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-09-20 12:03 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -18,10 +18,10 @@ An external check: for each destination, the model's monthly scores are compared
 | Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.0 | 59.8 | +3.2 | Jan ✅ |
 | Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.0 | 62.2 | +3.8 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.1 | 71.8 | -0.7 | Jun ≈ |
-| New York (JFK) | late spring & crisp autumn | 71.7 | 61.5 | +10.2 | Sep ✅ |
+| New York (JFK) | late spring & crisp autumn | 71.9 | 62.2 | +9.7 | Sep ✅ |
 | Reykjavik (KEF) | the short Icelandic summer | 71.6 | 59.2 | +12.4 | Jul ✅ |
 | Lisbon (LIS) | spring & early-autumn shoulder season | 73.6 | 75.3 | -1.7 | Jan ✗ |
-| Sydney (SYD) | late summer, autumn & spring | 75.5 | 71.2 | +4.2 | Feb ✅ |
+| Sydney (SYD) | late summer, autumn & spring | 75.5 | 71.2 | +4.3 | Feb ✅ |
 
 Where the model diverges it's explainable rather than random: Tokyo's peak lands in June because the weather-comfort formula weights mild temperature above the rainy-season precipitation penalty, and Lisbon skews to peak summer because the model optimizes weather comfort over the crowd-avoidance that drives the shoulder-season guidance. Both are documented limitations in the README, surfaced here by the validation rather than hidden by it.
 
@@ -74,7 +74,7 @@ Which signals are backed by real data vs. a neutral model default, per destinati
 | Tokyo (HND) | ● | ● | ● | ● | ● | ● | 100% |
 | Honolulu (HNL) | ● | ○ | ● | ● | ● | ● | 72% |
 | Istanbul (IST) | ● | ○ | ● | ● | ● | ● | 80% |
-| New York (JFK) | ● | ● | ● | ● | ● | ● | 92% |
+| New York (JFK) | ● | ● | ● | ● | ● | ● | 94% |
 | Reykjavik (KEF) | ● | ○ | ● | ● | ● | ● | 79% |
 | Los Angeles (LAX) | ● | ○ | ● | ● | ● | ● | 74% |
 | London (LHR) | ● | ○ | ● | ● | ● | ○ | 67% |
