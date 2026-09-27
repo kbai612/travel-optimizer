@@ -3,23 +3,23 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-09-26 12:17 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-09-27 12:47 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
 An external check: for each destination, the model's monthly scores are compared against the *conventionally-recommended* time to visit (mainstream travel-guide consensus, encoded in `report/reference.py`) — signals the model never sees. This is a sanity check, not a target the model is tuned toward.
 
-- **Directional agreement:** for **6/8** destinations the recommended months average a higher travel score than the rest of the year (mean margin **+4.2** points).
+- **Directional agreement:** for **6/8** destinations the recommended months average a higher travel score than the rest of the year (mean margin **+4.1** points).
 - **Peak month in the recommended window:** **5/8** (exact), rising to **7/8** allowing a ±1-month tolerance.
 
 | Destination | Recommended window | Rec. avg | Off-season avg | Margin | Peak month |
 |---|---|---:|---:|---:|---|
 | Bangkok (BKK) | cool, dry season | 75.8 | 72.6 | +3.2 | Jan ✅ |
 | Cape Town (CPT) | Southern-Hemisphere summer & autumn | 62.4 | 59.8 | +2.7 | Jan ✅ |
-| Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 77.9 | 74.5 | +3.4 | Aug ✅ |
+| Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.2 | 63.3 | +2.9 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.1 | 71.8 | -0.7 | Jun ≈ |
 | New York (JFK) | late spring & crisp autumn | 72.1 | 61.9 | +10.2 | Aug ≈ |
-| Reykjavik (KEF) | the short Icelandic summer | 71.5 | 59.4 | +12.2 | Jul ✅ |
+| Reykjavik (KEF) | the short Icelandic summer | 71.5 | 59.4 | +12.1 | Jul ✅ |
 | Lisbon (LIS) | spring & early-autumn shoulder season | 73.6 | 75.3 | -1.7 | Jan ✗ |
 | Sydney (SYD) | late summer, autumn & spring | 75.5 | 71.2 | +4.3 | Feb ✅ |
 
@@ -39,13 +39,13 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Dubai (DXB) | Jan | 49.4 | 68% | good fares |
 | Buenos Aires (EZE) | Nov | 79.9 | 70% | good fares |
 | Rome (FCO) | Sep | 74.5 | 80% | good fares |
-| Rio de Janeiro (GIG) | Aug | 82.1 | 80% | few holiday spikes |
+| Rio de Janeiro (GIG) | Aug | 69.8 | 80% | few holiday spikes |
 | Hong Kong (HKG) | Nov | 70.9 | 80% | good fares |
 | Tokyo (HND) | Jun | 80.8 | 100% | few holiday spikes |
 | Honolulu (HNL) | Sep | 82.6 | 80% | good fares |
 | Istanbul (IST) | Sep | 74.2 | 80% | good fares |
 | New York (JFK) | Aug | 84.6 | 100% | good fares |
-| Reykjavik (KEF) | Jul | 75.0 | 80% | few holiday spikes |
+| Reykjavik (KEF) | Jul | 74.9 | 80% | few holiday spikes |
 | Los Angeles (LAX) | Aug | 82.2 | 80% | few holiday spikes |
 | London (LHR) | Sep | 68.1 | 70% | good fares |
 | Lisbon (LIS) | Jan | 82.0 | 100% | good fares |
@@ -59,14 +59,14 @@ Which signals are backed by real data vs. a neutral model default, per destinati
 
 | Destination | Weather | Demand | Price | Holiday | Air quality | Sea temp | Confidence |
 |---|---|---|---|---|---|---|---|
-| Amsterdam (AMS) | ● | ○ | ● | ● | ● | ○ | 68% |
-| Barcelona (BCN) | ● | ○ | ● | ● | ● | ● | 79% |
+| Amsterdam (AMS) | ● | ○ | ● | ● | ● | ○ | 70% |
+| Barcelona (BCN) | ● | ○ | ● | ● | ● | ● | 80% |
 | Bangkok (BKK) | ● | ● | ● | ○ | ● | ○ | 78% |
 | Paris (CDG) | ● | ○ | ● | ● | ● | ○ | 70% |
 | Cape Town (CPT) | ● | ● | ● | ● | ● | ● | 92% |
 | Cancun (CUN) | ● | ○ | ● | ● | ● | ● | 80% |
 | Bali (DPS) | ● | ○ | ● | ● | ● | ● | 76% |
-| Dubai (DXB) | ● | ○ | ● | ○ | ● | ● | 63% |
+| Dubai (DXB) | ● | ○ | ● | ○ | ● | ● | 65% |
 | Buenos Aires (EZE) | ● | ○ | ● | ● | ● | ○ | 66% |
 | Rome (FCO) | ● | ○ | ● | ● | ● | ● | 80% |
 | Rio de Janeiro (GIG) | ● | ○ | ● | ● | ● | ● | 79% |
