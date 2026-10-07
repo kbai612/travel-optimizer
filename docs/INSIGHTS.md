@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-10-06 14:06 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-10-07 14:19 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -14,14 +14,14 @@ An external check: for each destination, the model's monthly scores are compared
 
 | Destination | Recommended window | Rec. avg | Off-season avg | Margin | Peak month |
 |---|---|---:|---:|---:|---|
-| Bangkok (BKK) | cool, dry season | 75.3 | 72.9 | +2.5 | Jan ✅ |
+| Bangkok (BKK) | cool, dry season | 75.3 | 72.9 | +2.4 | Jan ✅ |
 | Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.5 | 59.7 | +3.8 | Jan ✅ |
 | Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.2 | 63.3 | +3.0 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.2 | 71.8 | -0.6 | Jun ≈ |
 | New York (JFK) | late spring & crisp autumn | 72.1 | 62.1 | +10.0 | Aug ≈ |
 | Reykjavik (KEF) | the short Icelandic summer | 71.6 | 60.2 | +11.3 | Jul ✅ |
-| Lisbon (LIS) | spring & early-autumn shoulder season | 73.7 | 75.4 | -1.6 | Jan ✗ |
-| Sydney (SYD) | late summer, autumn & spring | 75.6 | 72.6 | +3.0 | Feb ✅ |
+| Lisbon (LIS) | spring & early-autumn shoulder season | 73.7 | 75.3 | -1.6 | Jan ✗ |
+| Sydney (SYD) | late summer, autumn & spring | 75.6 | 72.6 | +3.1 | Feb ✅ |
 
 Where the model diverges it's explainable rather than random: Tokyo's peak lands in June because the weather-comfort formula weights mild temperature above the rainy-season precipitation penalty, and Lisbon skews to peak summer because the model optimizes weather comfort over the crowd-avoidance that drives the shoulder-season guidance. Both are documented limitations in the README, surfaced here by the validation rather than hidden by it.
 
@@ -30,7 +30,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Destination | Top month | Score | Confidence | Leading real signal |
 |---|---|---|---|---|
 | Amsterdam (AMS) | Aug | 68.7 | 70% | few holiday spikes |
-| Barcelona (BCN) | Aug | 68.5 | 80% | warm seas |
+| Barcelona (BCN) | Aug | 68.6 | 80% | warm seas |
 | Bangkok (BKK) | Jan | 78.3 | 78% | good fares |
 | Paris (CDG) | Sep | 68.7 | 70% | good fares |
 | Cape Town (CPT) | Jan | 71.7 | 100% | mild weather |
@@ -49,7 +49,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Los Angeles (LAX) | Sep | 81.6 | 80% | good fares |
 | London (LHR) | Sep | 68.1 | 70% | good fares |
 | Lisbon (LIS) | Jan | 82.0 | 100% | good fares |
-| Marrakesh (RAK) | Oct | 70.2 | 70% | few holiday spikes |
+| Marrakesh (RAK) | Oct | 70.5 | 70% | few holiday spikes |
 | Singapore (SIN) | Sep | 80.6 | 80% | good fares |
 | Sydney (SYD) | Feb | 85.1 | 100% | good fares |
 
@@ -65,7 +65,7 @@ Which signals are backed by real data vs. a neutral model default, per destinati
 | Paris (CDG) | ● | ○ | ● | ● | ● | ○ | 70% |
 | Cape Town (CPT) | ● | ● | ● | ● | ● | ● | 94% |
 | Cancun (CUN) | ● | ○ | ● | ● | ● | ● | 80% |
-| Bali (DPS) | ● | ○ | ● | ● | ● | ● | 76% |
+| Bali (DPS) | ● | ○ | ● | ● | ● | ● | 77% |
 | Dubai (DXB) | ● | ○ | ● | ○ | ● | ● | 65% |
 | Buenos Aires (EZE) | ● | ○ | ● | ● | ● | ○ | 66% |
 | Rome (FCO) | ● | ○ | ● | ● | ● | ● | 80% |
@@ -77,9 +77,9 @@ Which signals are backed by real data vs. a neutral model default, per destinati
 | New York (JFK) | ● | ● | ● | ● | ● | ● | 98% |
 | Reykjavik (KEF) | ● | ○ | ● | ● | ● | ● | 80% |
 | Los Angeles (LAX) | ● | ○ | ● | ● | ● | ● | 76% |
-| London (LHR) | ● | ○ | ● | ● | ● | ○ | 68% |
+| London (LHR) | ● | ○ | ● | ● | ● | ○ | 70% |
 | Lisbon (LIS) | ● | ● | ● | ● | ● | ● | 98% |
-| Marrakesh (RAK) | ● | ○ | ● | ● | ● | ○ | 58% |
+| Marrakesh (RAK) | ● | ○ | ● | ● | ● | ○ | 60% |
 | Singapore (SIN) | ● | ○ | ● | ● | ● | ● | 72% |
 | Sydney (SYD) | ● | ● | ● | ● | ● | ● | 86% |
 
