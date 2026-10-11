@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-10-10 13:27 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-10-11 13:38 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -16,10 +16,10 @@ An external check: for each destination, the model's monthly scores are compared
 |---|---|---:|---:|---:|---|
 | Bangkok (BKK) | cool, dry season | 75.3 | 72.9 | +2.4 | Jan ✅ |
 | Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.4 | 59.7 | +3.7 | Jan ✅ |
-| Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.2 | 63.3 | +3.0 | Aug ✅ |
+| Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.3 | 63.3 | +3.0 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.2 | 71.8 | -0.6 | Jun ≈ |
 | New York (JFK) | late spring & crisp autumn | 73.4 | 62.3 | +11.1 | Aug ≈ |
-| Reykjavik (KEF) | the short Icelandic summer | 71.6 | 60.2 | +11.3 | Jul ✅ |
+| Reykjavik (KEF) | the short Icelandic summer | 71.6 | 60.3 | +11.3 | Jul ✅ |
 | Lisbon (LIS) | spring & early-autumn shoulder season | 73.8 | 75.3 | -1.5 | Jan ✗ |
 | Sydney (SYD) | late summer, autumn & spring | 75.7 | 72.5 | +3.2 | Feb ✅ |
 
