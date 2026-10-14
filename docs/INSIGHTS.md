@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-10-13 15:04 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-10-14 12:42 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -14,11 +14,11 @@ An external check: for each destination, the model's monthly scores are compared
 
 | Destination | Recommended window | Rec. avg | Off-season avg | Margin | Peak month |
 |---|---|---:|---:|---:|---|
-| Bangkok (BKK) | cool, dry season | 75.2 | 72.9 | +2.4 | Jan ✅ |
-| Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.4 | 59.7 | +3.7 | Jan ✅ |
+| Bangkok (BKK) | cool, dry season | 75.2 | 72.9 | +2.3 | Jan ✅ |
+| Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.3 | 59.7 | +3.6 | Jan ✅ |
 | Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.3 | 63.3 | +3.0 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.1 | 71.8 | -0.7 | Jun ≈ |
-| New York (JFK) | late spring & crisp autumn | 73.3 | 62.5 | +10.8 | Aug ≈ |
+| New York (JFK) | late spring & crisp autumn | 73.3 | 62.7 | +10.5 | Aug ≈ |
 | Reykjavik (KEF) | the short Icelandic summer | 71.6 | 60.2 | +11.3 | Jul ✅ |
 | Lisbon (LIS) | spring & early-autumn shoulder season | 73.8 | 75.3 | -1.5 | Jan ✗ |
 | Sydney (SYD) | late summer, autumn & spring | 75.7 | 72.5 | +3.2 | Feb ✅ |
@@ -47,7 +47,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | New York (JFK) | Aug | 84.5 | 100% | good fares |
 | Reykjavik (KEF) | Jul | 75.1 | 80% | good fares |
 | Los Angeles (LAX) | Sep | 81.6 | 80% | good fares |
-| London (LHR) | Sep | 68.1 | 70% | good fares |
+| London (LHR) | Sep | 67.9 | 70% | few holiday spikes |
 | Lisbon (LIS) | Jan | 82.0 | 100% | good fares |
 | Marrakesh (RAK) | Oct | 70.2 | 70% | few holiday spikes |
 | Singapore (SIN) | Sep | 80.6 | 80% | good fares |
