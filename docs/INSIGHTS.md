@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-10-16 12:07 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-10-17 11:40 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -17,8 +17,8 @@ An external check: for each destination, the model's monthly scores are compared
 | Bangkok (BKK) | cool, dry season | 75.1 | 72.9 | +2.2 | Jan ✅ |
 | Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.3 | 59.7 | +3.6 | Jan ✅ |
 | Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.3 | 63.3 | +3.0 | Aug ✅ |
-| Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.1 | 71.9 | -0.8 | Jun ≈ |
-| New York (JFK) | late spring & crisp autumn | 73.2 | 63.1 | +10.1 | Aug ≈ |
+| Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.1 | 71.9 | -0.9 | Jun ≈ |
+| New York (JFK) | late spring & crisp autumn | 73.1 | 63.2 | +9.9 | Aug ≈ |
 | Reykjavik (KEF) | the short Icelandic summer | 71.6 | 60.2 | +11.3 | Jul ✅ |
 | Lisbon (LIS) | spring & early-autumn shoulder season | 73.8 | 75.2 | -1.5 | Jan ✗ |
 | Sydney (SYD) | late summer, autumn & spring | 75.7 | 72.5 | +3.2 | Feb ✅ |
@@ -33,7 +33,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Barcelona (BCN) | Aug | 68.9 | 80% | warm seas |
 | Bangkok (BKK) | Jan | 78.3 | 78% | good fares |
 | Paris (CDG) | Sep | 68.7 | 70% | good fares |
-| Cape Town (CPT) | Jan | 71.8 | 100% | mild weather |
+| Cape Town (CPT) | Jan | 71.7 | 100% | mild weather |
 | Cancun (CUN) | Feb | 82.7 | 80% | good fares |
 | Bali (DPS) | Jul | 71.0 | 80% | good fares |
 | Dubai (DXB) | Jan | 49.4 | 68% | good fares |
