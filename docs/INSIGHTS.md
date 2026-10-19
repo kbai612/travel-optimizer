@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-10-18 12:00 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-10-19 14:10 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -14,11 +14,11 @@ An external check: for each destination, the model's monthly scores are compared
 
 | Destination | Recommended window | Rec. avg | Off-season avg | Margin | Peak month |
 |---|---|---:|---:|---:|---|
-| Bangkok (BKK) | cool, dry season | 75.1 | 72.9 | +2.2 | Jan ✅ |
+| Bangkok (BKK) | cool, dry season | 75.1 | 72.9 | +2.1 | Jan ✅ |
 | Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.3 | 59.7 | +3.6 | Jan ✅ |
 | Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.3 | 63.3 | +3.0 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.1 | 71.9 | -0.9 | Jun ≈ |
-| New York (JFK) | late spring & crisp autumn | 73.1 | 63.4 | +9.7 | Aug ≈ |
+| New York (JFK) | late spring & crisp autumn | 73.1 | 63.5 | +9.6 | Aug ≈ |
 | Reykjavik (KEF) | the short Icelandic summer | 71.6 | 60.2 | +11.3 | Jul ✅ |
 | Lisbon (LIS) | spring & early-autumn shoulder season | 73.8 | 75.2 | -1.5 | Jan ✗ |
 | Sydney (SYD) | late summer, autumn & spring | 75.7 | 72.5 | +3.2 | Feb ✅ |
@@ -39,15 +39,15 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Dubai (DXB) | Jan | 49.4 | 68% | good fares |
 | Buenos Aires (EZE) | Nov | 79.9 | 70% | good fares |
 | Rome (FCO) | Sep | 74.5 | 80% | good fares |
-| Rio de Janeiro (GIG) | Aug | 70.1 | 80% | few holiday spikes |
+| Rio de Janeiro (GIG) | Aug | 70.2 | 80% | few holiday spikes |
 | Hong Kong (HKG) | Nov | 70.9 | 80% | good fares |
-| Tokyo (HND) | Jun | 80.5 | 100% | few holiday spikes |
+| Tokyo (HND) | Jun | 80.4 | 100% | few holiday spikes |
 | Honolulu (HNL) | Sep | 82.6 | 80% | good fares |
-| Istanbul (IST) | Sep | 74.2 | 80% | good fares |
+| Istanbul (IST) | Sep | 73.8 | 80% | few holiday spikes |
 | New York (JFK) | Aug | 84.5 | 100% | good fares |
 | Reykjavik (KEF) | Jul | 75.1 | 80% | good fares |
 | Los Angeles (LAX) | Sep | 81.6 | 80% | good fares |
-| London (LHR) | Sep | 67.9 | 70% | few holiday spikes |
+| London (LHR) | Sep | 68.0 | 70% | few holiday spikes |
 | Lisbon (LIS) | Jan | 82.0 | 100% | good fares |
 | Marrakesh (RAK) | Oct | 70.2 | 70% | few holiday spikes |
 | Singapore (SIN) | Sep | 80.6 | 80% | good fares |
