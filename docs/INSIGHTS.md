@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-11-12 16:08 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-11-13 15:17 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -18,7 +18,7 @@ An external check: for each destination, the model's monthly scores are compared
 | Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.6 | 59.6 | +4.1 | Jan ✅ |
 | Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.3 | 63.3 | +3.0 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.1 | 71.8 | -0.7 | Jun ≈ |
-| New York (JFK) | late spring & crisp autumn | 72.8 | 65.5 | +7.3 | Aug ≈ |
+| New York (JFK) | late spring & crisp autumn | 72.8 | 65.5 | +7.4 | Aug ≈ |
 | Reykjavik (KEF) | the short Icelandic summer | 71.4 | 60.4 | +11.0 | Jul ✅ |
 | Lisbon (LIS) | spring & early-autumn shoulder season | 75.1 | 75.1 | +0.0 | Jan ✗ |
 | Sydney (SYD) | late summer, autumn & spring | 75.8 | 72.5 | +3.3 | Feb ✅ |
