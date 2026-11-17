@@ -3,13 +3,13 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-11-16 16:42 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-11-17 16:50 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
 An external check: for each destination, the model's monthly scores are compared against the *conventionally-recommended* time to visit (mainstream travel-guide consensus, encoded in `report/reference.py`) — signals the model never sees. This is a sanity check, not a target the model is tuned toward.
 
-- **Directional agreement:** for **7/8** destinations the recommended months average a higher travel score than the rest of the year (mean margin **+3.7** points).
+- **Directional agreement:** for **6/8** destinations the recommended months average a higher travel score than the rest of the year (mean margin **+3.7** points).
 - **Peak month in the recommended window:** **5/8** (exact), rising to **7/8** allowing a ±1-month tolerance.
 
 | Destination | Recommended window | Rec. avg | Off-season avg | Margin | Peak month |
@@ -18,7 +18,7 @@ An external check: for each destination, the model's monthly scores are compared
 | Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.6 | 59.6 | +4.1 | Jan ✅ |
 | Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.3 | 63.3 | +3.0 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.1 | 71.8 | -0.7 | Jun ≈ |
-| New York (JFK) | late spring & crisp autumn | 72.8 | 65.5 | +7.3 | Aug ≈ |
+| New York (JFK) | late spring & crisp autumn | 72.8 | 65.6 | +7.2 | Aug ≈ |
 | Reykjavik (KEF) | the short Icelandic summer | 71.3 | 60.4 | +10.9 | Jul ✅ |
 | Lisbon (LIS) | spring & early-autumn shoulder season | 75.1 | 75.1 | +0.0 | Jan ✗ |
 | Sydney (SYD) | late summer, autumn & spring | 75.8 | 72.6 | +3.2 | Feb ✅ |
@@ -29,7 +29,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 
 | Destination | Top month | Score | Confidence | Leading real signal |
 |---|---|---|---|---|
-| Amsterdam (AMS) | Sep | 66.9 | 70% | few holiday spikes |
+| Amsterdam (AMS) | Sep | 67.0 | 70% | few holiday spikes |
 | Barcelona (BCN) | Aug | 69.1 | 80% | warm seas |
 | Bangkok (BKK) | Jan | 78.4 | 78% | good fares |
 | Paris (CDG) | Sep | 68.7 | 70% | good fares |
