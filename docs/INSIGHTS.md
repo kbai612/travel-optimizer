@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-11-18 16:29 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-11-19 16:37 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -30,7 +30,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Destination | Top month | Score | Confidence | Leading real signal |
 |---|---|---|---|---|
 | Amsterdam (AMS) | Sep | 67.0 | 70% | few holiday spikes |
-| Barcelona (BCN) | Aug | 69.1 | 80% | warm seas |
+| Barcelona (BCN) | Aug | 69.0 | 80% | warm seas |
 | Bangkok (BKK) | Jan | 78.4 | 78% | good fares |
 | Paris (CDG) | Sep | 68.7 | 70% | good fares |
 | Cape Town (CPT) | Jan | 71.5 | 100% | mild weather |
@@ -41,7 +41,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Rome (FCO) | Sep | 74.5 | 80% | good fares |
 | Rio de Janeiro (GIG) | Aug | 69.8 | 80% | few holiday spikes |
 | Hong Kong (HKG) | Nov | 70.9 | 80% | good fares |
-| Tokyo (HND) | Jun | 80.3 | 100% | few holiday spikes |
+| Tokyo (HND) | Jun | 80.2 | 100% | few holiday spikes |
 | Honolulu (HNL) | Sep | 82.6 | 80% | good fares |
 | Istanbul (IST) | Sep | 73.7 | 80% | few holiday spikes |
 | New York (JFK) | Aug | 84.6 | 100% | good fares |
