@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-11-19 16:37 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-11-20 16:16 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -18,7 +18,7 @@ An external check: for each destination, the model's monthly scores are compared
 | Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.6 | 59.6 | +4.1 | Jan ✅ |
 | Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.8 | 63.1 | +3.6 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.1 | 71.8 | -0.7 | Jun ≈ |
-| New York (JFK) | late spring & crisp autumn | 72.8 | 65.6 | +7.2 | Aug ≈ |
+| New York (JFK) | late spring & crisp autumn | 72.8 | 65.7 | +7.1 | Aug ≈ |
 | Reykjavik (KEF) | the short Icelandic summer | 71.3 | 60.4 | +10.9 | Jul ✅ |
 | Lisbon (LIS) | spring & early-autumn shoulder season | 75.1 | 75.1 | +0.0 | Jan ✗ |
 | Sydney (SYD) | late summer, autumn & spring | 75.8 | 72.6 | +3.2 | Feb ✅ |
@@ -30,7 +30,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Destination | Top month | Score | Confidence | Leading real signal |
 |---|---|---|---|---|
 | Amsterdam (AMS) | Sep | 67.0 | 70% | few holiday spikes |
-| Barcelona (BCN) | Aug | 69.0 | 80% | warm seas |
+| Barcelona (BCN) | Aug | 68.9 | 80% | warm seas |
 | Bangkok (BKK) | Jan | 78.4 | 78% | good fares |
 | Paris (CDG) | Sep | 68.7 | 70% | good fares |
 | Cape Town (CPT) | Jan | 71.5 | 100% | mild weather |
@@ -44,7 +44,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Tokyo (HND) | Jun | 80.2 | 100% | few holiday spikes |
 | Honolulu (HNL) | Sep | 82.6 | 80% | good fares |
 | Istanbul (IST) | Sep | 73.7 | 80% | few holiday spikes |
-| New York (JFK) | Aug | 84.6 | 100% | good fares |
+| New York (JFK) | Aug | 84.5 | 100% | few holiday spikes |
 | Reykjavik (KEF) | Jul | 74.4 | 80% | few holiday spikes |
 | Los Angeles (LAX) | Sep | 81.6 | 80% | good fares |
 | London (LHR) | Sep | 68.1 | 70% | good fares |
