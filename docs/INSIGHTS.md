@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-11-21 15:23 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-11-22 15:26 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -33,7 +33,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Barcelona (BCN) | Aug | 68.9 | 80% | warm seas |
 | Bangkok (BKK) | Jan | 78.4 | 78% | good fares |
 | Paris (CDG) | Sep | 68.7 | 70% | good fares |
-| Cape Town (CPT) | Jan | 71.5 | 100% | mild weather |
+| Cape Town (CPT) | Jan | 71.4 | 100% | mild weather |
 | Cancun (CUN) | Feb | 82.7 | 80% | good fares |
 | Bali (DPS) | Jul | 70.9 | 80% | few holiday spikes |
 | Dubai (DXB) | Jan | 49.4 | 68% | good fares |
@@ -67,7 +67,7 @@ Which signals are backed by real data vs. a neutral model default, per destinati
 | Cancun (CUN) | ● | ○ | ● | ● | ● | ● | 80% |
 | Bali (DPS) | ● | ○ | ● | ● | ● | ● | 79% |
 | Dubai (DXB) | ● | ○ | ● | ○ | ● | ● | 66% |
-| Buenos Aires (EZE) | ● | ○ | ● | ● | ● | ○ | 67% |
+| Buenos Aires (EZE) | ● | ○ | ● | ● | ● | ○ | 68% |
 | Rome (FCO) | ● | ○ | ● | ● | ● | ● | 80% |
 | Rio de Janeiro (GIG) | ● | ○ | ● | ● | ● | ● | 79% |
 | Hong Kong (HKG) | ● | ○ | ● | ● | ● | ● | 79% |
@@ -76,7 +76,7 @@ Which signals are backed by real data vs. a neutral model default, per destinati
 | Istanbul (IST) | ● | ○ | ● | ● | ● | ● | 80% |
 | New York (JFK) | ● | ● | ● | ● | ● | ● | 100% |
 | Reykjavik (KEF) | ● | ○ | ● | ● | ● | ● | 80% |
-| Los Angeles (LAX) | ● | ○ | ● | ● | ● | ● | 77% |
+| Los Angeles (LAX) | ● | ○ | ● | ● | ● | ● | 79% |
 | London (LHR) | ● | ○ | ● | ● | ● | ○ | 70% |
 | Lisbon (LIS) | ● | ● | ● | ● | ● | ● | 100% |
 | Marrakesh (RAK) | ● | ○ | ● | ● | ● | ○ | 64% |
