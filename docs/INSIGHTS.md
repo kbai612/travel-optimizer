@@ -3,7 +3,7 @@
 <!-- GENERATED FILE — do not edit by hand. -->
 <!-- Regenerate with: uv run python -m report.insights -->
 
-_Auto-generated from `warehouse.duckdb` on 2026-11-27 17:01 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
+_Auto-generated from `warehouse.duckdb` on 2026-11-28 16:19 UTC, covering 23 destinations × 12 months. Numbers reflect whatever real data the warehouse currently holds (coverage varies by source — see the coverage table below)._
 
 ## Does the score match conventional wisdom?
 
@@ -15,7 +15,7 @@ An external check: for each destination, the model's monthly scores are compared
 | Destination | Recommended window | Rec. avg | Off-season avg | Margin | Peak month |
 |---|---|---:|---:|---:|---|
 | Bangkok (BKK) | cool, dry season | 74.9 | 73.0 | +1.9 | Jan ✅ |
-| Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.7 | 59.6 | +4.2 | Jan ✅ |
+| Cape Town (CPT) | Southern-Hemisphere summer & autumn | 63.7 | 59.6 | +4.1 | Jan ✅ |
 | Rio de Janeiro (GIG) | the dry Southern-Hemisphere winter | 66.8 | 63.1 | +3.7 | Aug ✅ |
 | Tokyo (HND) | cherry-blossom spring & autumn foliage | 71.0 | 71.9 | -0.9 | Jun ≈ |
 | New York (JFK) | late spring & crisp autumn | 72.0 | 66.1 | +5.9 | Aug ≈ |
@@ -30,7 +30,7 @@ Where the model diverges it's explainable rather than random: Tokyo's peak lands
 | Destination | Top month | Score | Confidence | Leading real signal |
 |---|---|---|---|---|
 | Amsterdam (AMS) | Sep | 66.9 | 70% | few holiday spikes |
-| Barcelona (BCN) | Aug | 68.8 | 80% | warm seas |
+| Barcelona (BCN) | Aug | 68.7 | 80% | warm seas |
 | Bangkok (BKK) | Jan | 78.4 | 78% | good fares |
 | Paris (CDG) | Aug | 67.4 | 70% | good fares |
 | Cape Town (CPT) | Jan | 71.4 | 100% | mild weather |
@@ -76,7 +76,7 @@ Which signals are backed by real data vs. a neutral model default, per destinati
 | Istanbul (IST) | ● | ○ | ● | ● | ● | ● | 80% |
 | New York (JFK) | ● | ● | ● | ● | ● | ● | 100% |
 | Reykjavik (KEF) | ● | ○ | ● | ● | ● | ● | 80% |
-| Los Angeles (LAX) | ● | ○ | ● | ● | ● | ● | 79% |
+| Los Angeles (LAX) | ● | ○ | ● | ● | ● | ● | 80% |
 | London (LHR) | ● | ○ | ● | ● | ● | ○ | 70% |
 | Lisbon (LIS) | ● | ● | ● | ● | ● | ● | 100% |
 | Marrakesh (RAK) | ● | ○ | ● | ● | ● | ○ | 66% |
